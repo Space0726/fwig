@@ -11,8 +11,10 @@ class InputError(Exception):
     """ User exception class for input error.
 
     Args:
-        expresstion:: str
+        expression:: str
+            Expression of current state.
         message:: str
+            Messages about error.
     """
     def __init__(self, expression, message):
         self.expression = expression
@@ -38,13 +40,22 @@ def extend_line(start_point, end_point, base_value, x_or_y, apply_extend=True):
 
     Args:
         start_point:: RPoint
+            RPoint object of start point.
         end_point:: RPoint
+            RPoint object of end point. The line extends from this point.
         base_value:: int
+            The coordinate value of how far you want to extend. The line
+            will extend to this value.
         x_or_y:: str
+            If base_value is an x coordinate value, type 'x' or 'X'.
+            If it is an y coordinate value,  type 'y' or 'Y'.
         apply_extend:: bool (default is True)
+            If it is True, the change is applied. Input False if you
+            do not want to apply the changes.
 
     Returns:
         extend_point:: (int, int)
+            The coordinate value of the result of the extension.
     """
     if x_or_y.islower():
         x_or_y = x_or_y.upper()
