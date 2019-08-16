@@ -1,4 +1,4 @@
-""" Font tools for extending line or curve obejct.
+""" Font tools for extending line or curve object.
 
 Last modified date: 2019/08/09
 
@@ -78,17 +78,33 @@ def extend_curve(curve_point_list, base_value, x_or_y, apply_extend=True):
 
     Args:
         curve_point_list:: [RPoint, RPoint, RPoint, RPoint]
+            4 RPoints forming a cubic bezier curve. The order is [(start point), 
+            (control point1), (control point2), (end point)]. The extension 
+            works from the end point.
         base_value:: int
+            The coordinate value of how far you want to extend. The curve
+            will extend to this value.
         x_or_y:: str
+            If base_value is an x coordinate value, type 'x' or 'X'.
+            If it is an y coordinate value,  type 'y' or 'Y'.
         apply_extend:: bool (default is True)
+            If it is True, the change is applied. Input False if you
+            do not want to apply the changes.
 
     Returns:
-        nodes:: numpy.ndarray -- [[float, float, float, float], [float, float, float, float]]
+        nodes:: 2x4 numpy.ndarray (float)
+            The coordinate values of the result of the extension. The rows
+            represent the coordinates(x, y) and the columns represent 4 points 
+            that form a cubic bezier curve. For example:
+            
+            [[(start_point_x, control_point_1_x, control_point_2_x, end_point_x]
+             [(start_point_y, control_point_1_y, control_point_2_y, end_point_y]]
+            
     """
     if len(curve_point_list) != 4:
         raise InputError('curve_point_list: ' + str(curve_point_list), \
                          "The number of data is not correct. Need 4 RPoint objects in the list")
-
+        
     curve_x = [float(point.x) for point in curve_point_list]
     curve_y = [float(point.y) for point in curve_point_list]
     base_value = float(base_value)
