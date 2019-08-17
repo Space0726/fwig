@@ -1,105 +1,141 @@
+""" Font tools for calculating derivative and using it.
+
+Last modified date: 2019/08/17
+
+Created by Seongju Woo.
+"""
+import math
 import numpy as np
 import bezier
-import math
-import appendTools
+import appendtools
 
-# # #
-# Calculate the derivative of the current point(=points[pIndex]) and returned it
-def getDerivative(points, pIndex):
-    # Make currrent point's bezier instance #
-    nodes = np.asfortranarray([
-        [float(points[pIndex+i].x) for i in range(-3, 1)],
-        [float(points[pIndex+i].y) for i in range(-3, 1)],
-        ])
-    # Extend the curve for the derivative function #
-    curve = bezier.Curve(nodes, degree=3).specialize(0, 1.5)
-    
-    # Calculate two x value for the derivative function #
-    # These are the values ​​from the original value plus and minus the very small value(1e-4) #
-    cx, cy = points[pIndex].position
-    line1 = bezier.Curve(np.asfortranarray([[cx + 1e-4, cx + 1e-4], [-1000, 1000],]), degree=1)
-    line2 = bezier.Curve(np.asfortranarray([[cx - 1e-4, cx - 1e-4], [-1000, 1000],]), degree=1)
-    
-    # Find the y value that corresponds to the x value #
-    dp = curve.evaluate(curve.intersect(line1)[0, :][0])[1][0]
-    dn = curve.evaluate(curve.intersect(line2)[0, :][0])[1][0]
-    
-    # Return derivative function value #
-    return (dp-dn) / (2*(1e-4))
+def _calculate_distance(point_1, point_2):
+    return math.sqrt(pow(point_1[0]-point_2[0], 2)
+                     + pow(point_1[1]-point_2[1], 2))
 
-# # #
-# Determine if two curves are meeted
-def isCurveMeet(curve1, curve2):
-    if curve2.intersect(curve1)[0, :]:
+def _is_curve_meet(curve_1, curve_2):
+    if curve_2.intersect(curve_1)[0, :]:
         return True
     return False
 
-# # #
-# Append point to opposite curve using line with gradient(by derivative) for pairing
-# *** It is recommended to use this function from inside(derivative) to outside(append point) ***
-# Parameter - points: RContour's points of RPoint to be derivative
-#           - pIndex: Index(at first parameter) of RPoint to be derivative
-#           - target: RContour object which containing the opposite curve
-# ex) g = CurrentGlyph()
-#     appendPointByDerivative(g.contours[0].points, 3, g.contours[1])
-def appendPointByDerivative(points, pIndex, target):
-    tp = target.points
-    dist = 0xFFFFFF
-    targetPoints, rate = None, 0
-    px, py = points[pIndex].position
-    
+def calculate_derivative(contour_points, target_index):
+    """ Calculate derivative.
+
+    Calculate the derivative of the current point(contour_points[target_index])
+    and returned it.
+
+    Args:
+        contour_points:: [RPoint, RPoint, ...]
+        target_index:: int
+
+    Returns:
+        derivative value:: int
+            The result of derivative calculating.
+    """
+    # Make currrent point's bezier instance.
+    nodes = np.asfortranarray([
+        [float(contour_points[target_index+i].x) for i in range(-3, 1)],
+        [float(contour_points[target_index+i].y) for i in range(-3, 1)]
+        ])
+    # Extend the curve for the derivative function.
+    curve = bezier.Curve(nodes, degree=3).specialize(0, 1.5)
+
+    # Calculate two x value for the derivative function.
+    # These are the values from the original value plus and minus the very
+    # small value(1e-4).
+    current_x, _ = contour_points[target_index].position
+    delta_x = 1e-4
+    line_1 = bezier.Curve(np.asfortranarray([
+        [current_x + delta_x, current_x + delta_x],
+        [-1000, 1000]
+        ]), degree=1)
+    line_2 = bezier.Curve(np.asfortranarray([
+        [current_x - delta_x, current_x - delta_x],
+        [-1000, 1000]
+        ]), degree=1)
+
+    # Find the y value that corresponds to the x value.
+    prev_derivative = curve.evaluate(curve.intersect(line_1)[0, :][0])[1][0]
+    next_derivative = curve.evaluate(curve.intersect(line_2)[0, :][0])[1][0]
+
+    # Return derivative function value.
+    return (prev_derivative-next_derivative) / (2*delta_x)
+
+def append_point_by_derivative(contour_points, target_index, target_contour):
+    """ Append point to opposite curve by using derivative.
+
+    Append point to opposite curve using line with gradient(by derivative)
+    for pairing. It is recommended to use this function from inside(derivative)
+    to outside(append point).
+
+    Args:
+        contour_points:: [RPoint, RPoint, ...]
+            RContour's points(RPoint objects) to be derivative.
+        target_index:: int
+            Index(at first parameter) of RPoint to be derivative.
+        target_contour: RContour
+            RContour object which containing the opposite curve.
+
+    Examples:
+        glyph = CurrentGlyph()
+
+        # RContour's list of RPoints which you want to derivative.
+        contour_points = glyph.contours[0].points
+
+        # Index(at contour_points) of RPoint to be derivative.
+        target_index = 3
+
+        # RContour object which you want to add a point.
+        target_contour = glyph.contours[1]
+
+        append_point_by_derivative(contour_points,target_index,target_contour)
+    """
+    target_contour_points = target_contour.points
+    distance = 0xFFFFFF
+    points_to_append, rate = None, 0
+    x_value, y_value = contour_points[target_index].position
+
     try:
-        # Calculate gradient by derivative #
-        gradient = -1 / float(getDerivative(points, pIndex))
-        # line's equation #
-        f = lambda x: gradient*x + py - (px*gradient)
-        # Extend 500 up and down from standard point #
-        line = bezier.Curve(np.asfortranarray([[px+500, px-500], [f(px+500), f(px-500)],]), degree=1)
+        # Calculate gradient by derivative.
+        gradient = -1 / calculate_derivative(contour_points, target_index)
+        # Line's equation.
+        linear_function = lambda x: gradient*x + y_value - (x_value*gradient)
+        # Extend 500 up and down from standard point.
+        line = bezier.Curve(np.asfortranarray([
+            [x_value+500, x_value-500],
+            [linear_function(x_value+500), linear_function(x_value-500)]
+            ]), degree=1)
     except ZeroDivisionError:
-        line = bezier.Curve(np.asfortranarray([[px, px], [float(py+500), float(py-500)],]), degree=1)
-    
-    # Find what curve in target contour is meeted with line #
-    for i in range(len(tp)):
-        if i == pIndex and target.points == points:
+        line = bezier.Curve(np.asfortranarray([
+            [x_value, x_value],
+            [float(y_value+500), float(y_value-500)]
+            ]), degree=1)
+
+    # Find what curve in target contour is meeted with line.
+    for i, _ in enumerate(target_contour_points):
+        if i == target_index and target_contour_points == contour_points:
             continue
-        if tp[i].type != 'offcurve' and tp[i-1].type == 'offcurve':
+        if target_contour_points[i].type != 'offcurve' \
+                and target_contour_points[i-1].type == 'offcurve':
             nodes = np.asfortranarray([
-                [float(tp[i+j].x) for j in range(-3, 1)],
-                [float(tp[i+j].y) for j in range(-3, 1)],
+                [float(target_contour_points[i+j].x) for j in range(-3, 1)],
+                [float(target_contour_points[i+j].y) for j in range(-3, 1)]
                 ])
             curve = bezier.Curve(nodes, degree=3)
-            
-            # If line meet curve #
-            if isCurveMeet(line, curve):
-                mp = curve.evaluate(curve.intersect(line)[0, :][0])
-                meetPoint = tuple(mp.flatten())
-                newDist = distance(points[pIndex].position, meetPoint)
-                # Find nearest curve #
-                if newDist < dist:
-                    dist = newDist
-                    targetPoints = [tp[i+j] for j in range(-3, 1)]
-                    rate = curve.locate(mp)
 
-    # Append point at target curve #
-    if targetPoints and rate:
-        appendTools.appendPointRate(target, targetPoints, rate)
+            # If line meet curve.
+            if _is_curve_meet(line, curve):
+                meeting_object = curve.evaluate(curve.intersect(line)[0, :][0])
+                meeting_point = tuple(meeting_object.flatten())
+                new_distance = _calculate_distance( \
+                        contour_points[target_index].position, meeting_point)
+                # Find nearest curve.
+                if new_distance < distance:
+                    distance = new_distance
+                    points_to_append = [target_contour_points[i+j] \
+                                        for j in range(-3, 1)]
+                    rate = curve.locate(meeting_object)
 
-def distance(a, b):
-    return math.sqrt(pow(a[0]-b[0], 2) + pow(a[1]-b[1], 2))
-
-# # #
-# How to use #
-if __name__ == '__main__':
-    g = CurrentGlyph()
-    
-    # RContour's RPoints that containing RPoint which you want to derivative #
-    points = g.contours[0].points
-    
-    # Index of RPoint at points to be derivative #
-    pIndex = 7
-    
-    # RContour object which you want to add a point #
-    targetContour = g.contours[0]
-    
-    # Call appendPointByDerivative function #
-    appendPointByDerivative(points, pIndex, targetContour)
+    # Append point at target curve.
+    if points_to_append and rate:
+        appendtools.appendPointRate(target_contour, points_to_append, rate)
