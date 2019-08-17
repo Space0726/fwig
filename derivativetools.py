@@ -26,7 +26,9 @@ def calculate_derivative(contour_points, target_index):
 
     Args:
         contour_points:: [RPoint, RPoint, ...]
+            RContour's points(RPoint objects) to be derivative.
         target_index:: int
+            Index(at contour_points) of RPoint to be derivative.
 
     Returns:
         derivative value:: int
@@ -72,7 +74,7 @@ def append_point_by_derivative(contour_points, target_index, target_contour):
         contour_points:: [RPoint, RPoint, ...]
             RContour's points(RPoint objects) to be derivative.
         target_index:: int
-            Index(at first parameter) of RPoint to be derivative.
+            Index(at contour_points) of RPoint to be derivative.
         target_contour: RContour
             RContour object which containing the opposite curve.
 
