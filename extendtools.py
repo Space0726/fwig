@@ -97,8 +97,8 @@ def extend_curve(curve_point_list, base_value, x_or_y, apply_extend=True):
             represent the coordinates(x, y) and the columns represent 4 points 
             that form a cubic bezier curve. For example:
             
-            [[(start_point_x, control_point_1_x, control_point_2_x, end_point_x]
-             [(start_point_y, control_point_1_y, control_point_2_y, end_point_y]]
+            [[start_point_x, control_point_1_x, control_point_2_x, end_point_x]
+             [start_point_y, control_point_1_y, control_point_2_y, end_point_y]]
             
     """
     if len(curve_point_list) != 4:
