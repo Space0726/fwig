@@ -13,4 +13,3 @@ def make_component_current_font():
         f[name].rightMargin = f[key].rightMargin
         f[name].unicodes = f[key].unicodes
 
-make_component_current_font()
