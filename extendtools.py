@@ -9,14 +9,6 @@ import bezier
 from mojo.roboFont import RPoint
 
 class _InputError(Exception):
-    """ User exception class for input error.
-
-    Args:
-        expression:: str
-            Expression of current state.
-        message:: str
-            Messages about error.
-    """
     def __init__(self, expression, message):
         self.expression = expression
         self.message = message
