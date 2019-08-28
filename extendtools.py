@@ -6,8 +6,9 @@ Created by Seongju Woo.
 """
 import numpy as np
 import bezier
+from mojo.roboFont import RPoint
 
-class InputError(Exception):
+class _InputError(Exception):
     """ User exception class for input error.
 
     Args:
@@ -65,7 +66,7 @@ def get_linear_function(coordinates_1, coordinates_2, x_or_y):
 
     x_or_y = _make_lower_string(x_or_y)
     if (n_x == m_x and x_or_y == 'x') or (n_y == m_y and x_or_y == 'y'):
-        raise InputError(f"x_or_y: {x_or_y}, coordinates: {coordinates_1, coordinates_2}", \
+        raise _InputError(f"x_or_y: {x_or_y}, coordinates: {coordinates_1, coordinates_2}", \
                          "Not possible to get result because line is horizental or vertical")
     if x_or_y == 'x':
         linear_function = lambda x: (1 / (n_x-m_x))*((n_y - m_y)*x + (n_x*m_y - m_x*n_y))
@@ -86,8 +87,8 @@ def extend_line(start_point, end_point, base_value, x_or_y, apply_extend=True):
             The coordinate value of how far you want to extend. The line
             will extend to this value.
         x_or_y:: str
-            If base_value is an x coordinate value, type 'x' or 'X'.
-            If it is an y coordinate value,  type 'y' or 'Y'.
+            If base_value is an x coordinate value, type 'x'.
+            If it is an y coordinate value,  type 'y'.
         apply_extend:: bool (default is True)
             If it is True, the change is applied. Input False if you
             do not want to apply the changes.
@@ -104,7 +105,7 @@ def extend_line(start_point, end_point, base_value, x_or_y, apply_extend=True):
     elif x_or_y == 'x':
         extend_point = (linear_function(base_value), base_value)
     else:
-        raise InputError("x_or_y: " + x_or_y, "Put 'x' or 'y'")
+        raise _InputError("x_or_y: " + x_or_y, "Put 'x' or 'y'")
 
     if apply_extend:
         end_point.position = extend_point
@@ -116,15 +117,15 @@ def extend_curve(curve_point_list, base_value, x_or_y, apply_extend=True):
 
     Args:
         curve_point_list:: [RPoint, RPoint, RPoint, RPoint]
-            4 RPoints forming a cubic bezier curve. The order is [(start point),
-            (control point1), (control point2), (end point)]. The extension
-            works from the end point.
+            4 RPoint objects forming a cubic bezier curve. The order is
+            [(start point), (control point1), (control point2), (end point)].
+            The extension works from the end point.
         base_value:: int
             The coordinate value of how far you want to extend. The curve
             will extend to this value.
         x_or_y:: str
-            If base_value is an x coordinate value, type 'x' or 'X'.
-            If it is an y coordinate value,  type 'y' or 'Y'.
+            If base_value is an x coordinate value, type 'x'.
+            If it is an y coordinate value,  type 'y'.
         apply_extend:: bool (default is True)
             If it is True, the change is applied. Input False if you
             do not want to apply the changes.
@@ -140,7 +141,7 @@ def extend_curve(curve_point_list, base_value, x_or_y, apply_extend=True):
 
     """
     if len(curve_point_list) != 4:
-        raise InputError('curve_point_list: ' + str(curve_point_list), \
+        raise _InputError('curve_point_list: ' + str(curve_point_list), \
                          "The number of data is not correct. Need 4 RPoint objects in the list")
 
     curve_x = [float(point.x) for point in curve_point_list]
@@ -156,7 +157,7 @@ def extend_curve(curve_point_list, base_value, x_or_y, apply_extend=True):
     elif x_or_y == 'x':
         nodes = np.asfortranarray([[base_value, base_value], [0., 1000.]])
     else:
-        raise InputError("x_or_y: " + x_or_y, "Put 'x' or 'y'")
+        raise _InputError("x_or_y: " + x_or_y, "Put 'x' or 'y'")
 
     line = bezier.Curve(nodes, degree=1)
     s_vals = new_curve.intersect(line)[0, :]

@@ -7,6 +7,7 @@ Created by Seongju Woo.
 import math
 import numpy as np
 import bezier
+from mojo.roboFont import RContour, RPoint
 from . import appendtools
 
 def _calculate_distance(point_1, point_2):
@@ -79,6 +80,7 @@ def append_point_by_derivative(contour_points, target_index, target_contour):
             RContour object which containing the opposite curve.
 
     Examples:
+        from mojo.roboFont import CurrentGlyph
         glyph = CurrentGlyph()
 
         # RContour's list of RPoints which you want to derivative.

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from fontTools.misc.bezierTools import splitCubic, splitCubicAtT, splitLine
+from mojo.roboFont import RContour, RPoint
 
 # 곡선을 x 혹은 y 값을 기준으로 나누어 점을 추가하는 함수
 # parameter
