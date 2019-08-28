@@ -10,10 +10,10 @@ from stemfont import extendtools as et
 class Triangle:
     """ Make an isolated point into a triangle shape of two points.
 
-    This class is for selecing a isolated point that should be made triangle shape of two points.
-    This class can be used by inheritance. If you override three function(_is_triangle(),
-    _find_triangle_point(), _find_opposite_points()), you can decide what point should be selected
-    using your own criteria.
+    This class is for selecting a points without pairs and making it into triangle shape
+    of two points. This class can be used by inheritance. If you override three functions
+    (_is_triangle(), _find_triangle_point(), _find_opposite_points()), you can decide
+    what point should be selected using your own criteria.
 
     Args:
         contour:: RContour
