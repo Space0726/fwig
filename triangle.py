@@ -27,7 +27,7 @@ class Triangle:
          /    /  \    \          /    /  \    \
         /    /    \    \        /    /    \    \
 
-        from mojo.roboFont impot CurrentFont
+        from mojo.roboFont import CurrentFont
 
         f = CurrentFont()
         for o in f.glyphOrder:
