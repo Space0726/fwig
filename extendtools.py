@@ -94,7 +94,7 @@ def extend_line(start_point, end_point, base_value, x_or_y, apply_extend=True):
     linear_function = get_linear_function(start_point.position, end_point.position, x_or_y)
     if x_or_y == 'x':
         extend_point = (base_value, linear_function(base_value))
-    elif x_or_y == 'x':
+    elif x_or_y == 'y':
         extend_point = (linear_function(base_value), base_value)
     else:
         raise _InputError("x_or_y: " + x_or_y, "Put 'x' or 'y'")

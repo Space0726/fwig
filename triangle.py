@@ -92,12 +92,25 @@ class Triangle:
 
         return classify_dict
 
-    def _add_penpair_attribute(self, *pairs, start_pair_number=1):
+    def _add_penpair_attribute(self, *pairs, start_pair_number=1, twist=False):
         attribute_template = "'penPair':'z"
+        if twist:
+            turning = True
         for index, pair in enumerate(pairs):
             classify_dict = self._classify_right_and_left(pair)
-            classify_dict['right'].name = attribute_template + str(start_pair_number+index) + "r'"
-            classify_dict['left'].name = attribute_template + str(start_pair_number+index) + "l'"
+            classify_dict['right'].name = attribute_template + str(start_pair_number+index)
+            classify_dict['left'].name = attribute_template + str(start_pair_number+index)
+            if twist:
+                if turning:
+                    classify_dict['right'].name += "r'"
+                    classify_dict['left'].name += "l'"
+                else:
+                    classify_dict['right'].name += "l'"
+                    classify_dict['left'].name += "r'"
+                turning = not turning
+            else:
+                classify_dict['right'].name += "r'"
+                classify_dict['left'].name += "l'"
 
     def _get_number_of_all_points(self):
         return sum([len(contour.bPoints) for contour in self.contour.getParent().contours])
@@ -109,7 +122,6 @@ class Triangle:
             add_penpair:: bool (default is True)
                 If it is True, penpair attributes are added. If you do not want to
                 add penpair attribute, input False.
-
         """
         if not self._is_triangle():
             return
@@ -121,8 +133,8 @@ class Triangle:
         if max_penpair:
             start_pair_number = max_penpair + 1
         else:
-            start_pair_number = round(self._get_number_of_all_points()/2) + 1 \
-                                      - 2*len(triangle_indexes)
+            start_pair_number = (self._get_number_of_all_points() + len(triangle_indexes))//2 + 1 \
+                                 - 2*len(triangle_indexes)
         for triangle_index in triangle_indexes:
             self.contour.insertPoint(index=triangle_index,
                                      type='line',
@@ -141,7 +153,7 @@ class Triangle:
                 self._add_penpair_attribute(
                     (opposite_points_dict[prev_loc], self.points[triangle_index+1]),
                     (opposite_points_dict[next_loc], self.points[triangle_index]),
-                    start_pair_number=start_pair_number)
+                    start_pair_number=start_pair_number, twist=True)
             self.points[triangle_index].position = (prev_x, prev_func(prev_x))
             self.points[triangle_index+1].position = (next_x, next_func(next_x))
             start_pair_number += 2

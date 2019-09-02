@@ -1,10 +1,12 @@
+from stemfont import attributetools as at # change from . if input external packages.
+
 class Sound:
     _SOUNDS = ("'first'", "'middle'", "'final'")
 
     def __init__(self, glyph):
         self.glyph = glyph
 
-    def _get_sound(self) -> int:
+    def calculate_sound(self) -> int:
         """ If you want other criteria, you have to inherit this method.
         
         This method must return an integer value of one of -1, 0, 1, 2.
@@ -32,7 +34,7 @@ class Sound:
             name_attribute:: str
         """
         name_attribute = "'sound':"
-        glyph_sound = self._get_sound()
+        glyph_sound = self.calculate_sound()
         if glyph_sound != -1:
             name_attribute += Sound._SOUNDS[glyph_sound]
         else:
@@ -41,7 +43,11 @@ class Sound:
         if add_sound:
             target_point = self.glyph.contours[0].points[0]
             if target_point.name:
-                target_point.name += ',' + name_attribute
+                if "'sound':" in target_point.name and \
+                        at.get_attr('sound') != Sount._SOUNDS[glyph_sound]:
+                    at.set_attr('sound', Sound._SOUNDS[glyph_sound])
+                else:
+                    target_point.name += ',' + name_attribute
             else:
                 target_point.name = name_attribute
 
