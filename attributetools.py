@@ -110,7 +110,7 @@ class Attribute:
     def set_attr(self, attribute, value):
         if attribute in self.attribute:
             self.attribute[attribute] = value
-            self._update_attr
+            self._update_attr()
 
     def add_attr(self, attribute, value):
         if attribute not in self.attribute:
