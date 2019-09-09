@@ -1,5 +1,12 @@
+""" This is for handling stemfont attribute.
+
+Last modified date: 2019/09/09
+
+Created by Seongju Woo.
+"""
 import os
 import json
+from mojo.roboFont import RPoint
 from xml.etree import ElementTree as et
 
 def name2attr(path):

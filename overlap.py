@@ -1,3 +1,9 @@
+""" This is for finding contours that overlap with others.
+
+Last modified date: 2019/09/09
+
+Created by Seongju Woo
+"""
 from mojo.roboFont import CurrentFont
 
 def _is_overlap_other_contour(contours, target_contour):

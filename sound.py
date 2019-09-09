@@ -1,3 +1,9 @@
+""" This is for adding sound attribute at RPoints.
+
+Last modified data: 2019/09/09
+
+Created by Seongju Woo
+"""
 from stemfont import attributetools as at # change from . if input external packages.
 
 class Sound:
