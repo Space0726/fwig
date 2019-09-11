@@ -2,7 +2,7 @@
 
 Last modified date: 2019/09/09
 
-Created by Seongju Woo
+Created by Seongju Woo.
 """
 from mojo.roboFont import CurrentFont
 
