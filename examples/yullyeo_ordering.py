@@ -1,3 +1,9 @@
+""" This is example of setting attribute values in order using by Yullyeo font data.
+
+Last modified date: 2019/09/11
+
+Created by Seongju Woo.
+"""
 from stemfont import ordering as od
 
 class YullyeoOrdering(od.Ordering):
