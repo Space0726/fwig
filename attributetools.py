@@ -72,7 +72,7 @@ def name2dict(name) -> dict:
     return name_dict
 
 def dict2name(dict_attributes) -> str:
-    return ','.join([f"'{k}':'{v}'" for k, v in self.attribute.items()])
+    return ','.join([f"'{k}':'{v}'" for k, v in dict_attributes.items()])
 
 def get_attr(point, attribute):
     attributes = name2dict(point.name)
