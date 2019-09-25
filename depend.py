@@ -58,16 +58,19 @@ def add_depend_attribute(glyph):
     for contour in glyph.contours:
         for i, current_point in enumerate(contour.points):
             previous_point = contour.points[i-1]
-            if previous_point not in penpair_dict[at.get_attr(current_point, 'penPair')[1:-1]]:
+            try:
+                if previous_point not in penpair_dict[at.get_attr(current_point, 'penPair')[1:-1]]:
+                    continue
+                target_point = _find_depend_target(current_point, penpair_dict, all_points)
+                if target_point:
+                    attribute_name = ""
+                    if abs(current_point.x - previous_point.x) < 5:
+                        attribute_name = 'dependX'
+                    elif abs(current_point.y - previous_point.y) < 5:
+                        attribute_name = 'dependY'
+                    if attribute_name:
+                        at.add_attr(current_point, attribute_name, at.get_attr(target_point, 'penPair'))
+                        at.add_attr(previous_point, attribute_name, at.get_attr(target_point, 'penPair'))
+                        glyph.setChanged()
+            except TypeError:
                 continue
-            target_point = _find_depend_target(current_point, penpair_dict, all_points)
-            if target_point:
-                attribute_name = ""
-                if abs(current_point.x - previous_point.x) < 5:
-                    attribute_name = 'dependX'
-                elif abs(current_point.y - previous_point.y) < 5:
-                    attribute_name = 'dependY'
-                if attribute_name:
-                    at.add_attr(current_point, attribute_name, at.get_attr(target_point, 'penPair'))
-                    at.add_attr(previous_point, attribute_name, at.get_attr(target_point, 'penPair'))
-                    glyph.setChanged()
