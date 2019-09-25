@@ -66,6 +66,8 @@ def attr2name(path):
         tree.write(path + "/" + file, encoding="UTF-8", xml_declaration=True)
 
 def name2dict(name) -> dict:
+    if name is None:
+        return {}
     name = '{' + name.replace("'", '"') + '}'
     name_dict = json.loads(name)
 
