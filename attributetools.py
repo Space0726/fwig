@@ -87,7 +87,7 @@ def set_attr(point, attribute, value):
 def add_attr(point, attribute, value):
     attributes = name2dict(point.name)
     if attribute not in attributes:
-        attribute[attribute] = value
+        attributes[attribute] = value
         point.name = dict2name(attributes)
 
 def del_attr(point, attribute):
