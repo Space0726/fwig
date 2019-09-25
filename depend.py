@@ -1,4 +1,3 @@
-from itertools import chain
 from . import attributetools as at
 
 def _find_depend_target(point, penpair_dict, point_list):
@@ -37,7 +36,9 @@ def _calculate_inclination(point_1, point_2):
         return float('inf')
 
 def _get_all_point(glyph):
-    return set(chain.from_iterable([contour.points for contour in glyph.contours]))
+    return set([point for contour in glyph.contours \
+                      for point in contour.points \
+                      if point.type != 'offcurve'])
 
 def make_penpair_dict(all_points):
     penpair_dict = {}
