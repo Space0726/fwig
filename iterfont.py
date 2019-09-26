@@ -23,7 +23,7 @@ def _call_func_by_condition(func):
     return call_func_by_condition
 
 @_call_func_by_condition
-def point_iterator(font, *functions, **conditions=None):
+def point_iterator(font, *functions, **conditions):
     """ Call functions with RPoint objects in RFont object.
 
     Args:
