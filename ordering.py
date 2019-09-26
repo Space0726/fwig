@@ -67,4 +67,4 @@ class Ordering:
                                      + str(int(attr_value[1:-1]) + self.padding) \
                                      + attr_value[-1]
                     point_attr.set_attr(attribute, new_attr_value)
-        self.glyph.setChanged()
+                    self.glyph.setChanged()

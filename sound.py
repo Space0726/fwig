@@ -74,5 +74,5 @@ class Sound:
                 else:
                     target_point.name = name_attribute
 
-        self.glyph.setChanged()
+            self.glyph.setChanged()
         return name_attribute
