@@ -7,9 +7,11 @@ Last modified date: 2019/09/26
 
 Created by Seongju Woo.
 """
+from functools import wraps
 from mojo.roboFont import RFont, CurrentFont
 
 def _call_func_by_condition(func):
+    @wraps(func)
     def call_func_by_condition(data, *args, **kwargs):
         objects, functions, conditions = func(data, *args, **kwargs)
         for object_ in objects:
@@ -18,7 +20,7 @@ def _call_func_by_condition(func):
                 if condition is None:
                     function(object_)
                 else:
-                    if condition[object_]:
+                    if condition(object_):
                         function(object_)
     return call_func_by_condition
 
@@ -43,7 +45,8 @@ def point_iterator(font, *functions, **conditions):
     """
     return (point for order in font.glyphOrder \
                   for contour in font.getGlyph(order) \
-                  for point in contour.points), functions, conditions
+                  for point in contour.points) \
+           , functions, conditions
 
 @_call_func_by_condition
 def contour_iterator(font, *functions, **conditions):
@@ -65,7 +68,8 @@ def contour_iterator(font, *functions, **conditions):
         point_iterator(CurrentFont(), print_func, print_func=print_condition)
     """
     return (contour for order in font.glyphOrder \
-                    for contour in font.getGlyph(order)), functions, conditions
+                    for contour in font.getGlyph(order)) \
+           , functions, conditions
 
 @_call_func_by_condition
 def glyph_iterator(font, *functions, **conditions):
@@ -86,4 +90,5 @@ def glyph_iterator(font, *functions, **conditions):
 
         point_iterator(CurrentFont(), print_func, print_func=print_condition)
     """
-    return (font.getGlyph(order) for order in font.glyphOrder), functions, conditions
+    return (font.getGlyph(order) for order in font.glyphOrder) \
+           , functions, conditions
