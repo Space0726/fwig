@@ -49,4 +49,5 @@ def add_serif(glyph):
             if serif_cnt > 2:
                 break
 
-iterfont.glyph_iterator(CurrentFont(), add_serif, add_serif=is_serif_contour)
+if __name__ == '__main__':
+    iterfont.glyph_iterator(CurrentFont(), add_serif, add_serif=is_serif_contour)
