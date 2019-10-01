@@ -10,21 +10,21 @@ Created by Seongju Woo.
 from functools import wraps
 from mojo.roboFont import RFont, CurrentFont
 
-def _call_func_by_condition(func):
+def _call_func_with_condition(func):
     @wraps(func)
-    def call_func_by_condition(data, *args, **kwargs):
-        objects, functions, conditions = func(data, *args, **kwargs)
+    def call_func_with_condition(data, *args, **kwargs):
+        objects = func(data, *args, **kwargs)
         for object_ in objects:
-            for function in functions:
-                condition = conditions.get(function.__name__)
+            for function in args:
+                condition = kwargs.get(function.__name__)
                 if condition is None:
                     function(object_)
                 else:
                     if condition(object_):
                         function(object_)
-    return call_func_by_condition
+    return call_func_with_condition
 
-@_call_func_by_condition
+@_call_func_with_condition
 def point_iterator(font, *functions, **conditions):
     """ Call functions with RPoint objects in RFont object.
 
@@ -45,10 +45,9 @@ def point_iterator(font, *functions, **conditions):
     """
     return (point for order in font.glyphOrder \
                   for contour in font.getGlyph(order) \
-                  for point in contour.points) \
-           , functions, conditions
+                  for point in contour.points)
 
-@_call_func_by_condition
+@_call_func_with_condition
 def contour_iterator(font, *functions, **conditions):
     """ Call functions with RContour objects in RFont object.
 
@@ -68,10 +67,9 @@ def contour_iterator(font, *functions, **conditions):
         point_iterator(CurrentFont(), print_func, print_func=print_condition)
     """
     return (contour for order in font.glyphOrder \
-                    for contour in font.getGlyph(order)) \
-           , functions, conditions
+                    for contour in font.getGlyph(order))
 
-@_call_func_by_condition
+@_call_func_with_condition
 def glyph_iterator(font, *functions, **conditions):
     """ Call functions with RGlyph objects in RFont object.
 
@@ -90,5 +88,4 @@ def glyph_iterator(font, *functions, **conditions):
 
         point_iterator(CurrentFont(), print_func, print_func=print_condition)
     """
-    return (font.getGlyph(order) for order in font.glyphOrder) \
-           , functions, conditions
+    return (font.getGlyph(order) for order in font.glyphOrder)

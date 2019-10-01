@@ -1,2 +1,4 @@
-def divide_contour_by_points(contour, point_index_1, point_index_2):
-    1
+def divide_contour_by_slicing(contour, start_index, end_index, remain_joint=False):
+    glyph = contour.glyph
+    
+    
