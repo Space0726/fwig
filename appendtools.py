@@ -9,22 +9,22 @@ from fontTools.misc.bezierTools import splitCubic, splitCubicAtT, splitLine
 from mojo.roboFont import RContour, RPoint
 
 def append_point_coordinate(contour, rpoints, where, is_horizontal):
-    """ 곡선을 x 혹은 y 값을 기준으로 나누어 점을 추가하는 함수
+    """ 곡선을 x 혹은 y 값을 기준으로 나누어 점을 추가하는 함수.
 
     Args:
         contour:: RContour object
-            robofont에서 사용하는 contour object인 RContour
+            robofont에서 사용하는 contour object인 RContour.
         rpoints:: [RPoint object, ...]
             robofont에서 사용하는 point object인 RPoint의 list[곡선의 시작점, 보조점, 보조점, 곡선의 끝점]
-            순으로 구성 필요, 곡선의 시작점은 contour의 방향상 가장 먼저 나오는 점
+            순으로 구성 필요, 곡선의 시작점은 contour의 방향상 가장 먼저 나오는 점.
         where:: int or float
-            나눌 기준이 될 x 혹은 y 값
+            나눌 기준이 될 x 혹은 y 값.
         is_horizontal:: bool
-            where이 x 값이면 False, y 값이면 True
+            where이 x 값이면 False, y 값이면 True.
 
     Returns:
         status flag:: int
-            1이면 정상 종료, -1이면 에러 발생
+            1이면 정상 종료, -1이면 에러 발생.
     """
     points = _r2t(rpoints)
     new_curve = splitCubic(points[0], points[1], points[2], points[3], where, is_horizontal)
@@ -38,20 +38,20 @@ def append_point_coordinate(contour, rpoints, where, is_horizontal):
     return 1
 
 def append_point_rate(contour, rpoints, rate):
-    """ 곡선을 비율로 나누어 점을 추가하는 함수
+    """ 곡선을 비율로 나누어 점을 추가하는 함수.
     
     Args:
         contour:: RContour object
-            robofont에서 사용하는 contour object인 RContour
+            robofont에서 사용하는 contour object인 RContour.
         rpoints:: [RPoint object, ...]
             robofont에서 사용하는 point object인 RPoint의 list[곡선의 시작점, 보조점, 보조점, 곡선의 끝점]
-            순으로 구성 필요, 곡선의 시작점은 contour의 방향상 가장 먼저 나오는 점
+            순으로 구성 필요, 곡선의 시작점은 contour의 방향상 가장 먼저 나오는 점.
         rate:: float
-            0 ~ 1 사이의 나눌 비율
+            0 ~ 1 사이의 나눌 비율.
 
     Returns:
         status flag:: int
-            1이면 정상 종료, -1이면 에러 발생
+            1이면 정상 종료, -1이면 에러 발생.
     """
     points = _r2t(rpoints)
     new_curve = splitCubicAtT(points[0], points[1], points[2], points[3], rate)
@@ -79,22 +79,22 @@ def _append_point_curve(contour, rpoints, curve):
     return 1
 
 def append_point_coordinate_line(contour, rpoints, where, is_horizontal):
-    """ 직선을 x 혹은 y 값을 기준으로 나누어 점을 추가하는 함수
+    """ 직선을 x 혹은 y 값을 기준으로 나누어 점을 추가하는 함수.
 
     Args:
         contour:: RContour object
-            robofont에서 사용하는 contour object인 RContour
+            robofont에서 사용하는 contour object인 RContour.
         rpoints:: [RPoint object, ...]
             robofont에서 사용하는 point object인 RPoint의 list[직선의 시작점, 직선의 끝점]
-            순으로 구성 필요, 직선의 시작점은 contour의 방향상 가장 먼저 나오는 점
+            순으로 구성 필요, 직선의 시작점은 contour의 방향상 가장 먼저 나오는 점.
         where:: int or float
-            나눌 기준이 될 x 혹은 y 값
+            나눌 기준이 될 x 혹은 y 값.
         is_horizontal:: bool
-            where이 x 값이면 False, y 값이면 True
+            where이 x 값이면 False, y 값이면 True.
 
     Returns:
         status flag:: int
-            1이면 정상 종료, -1이면 에러 발생
+            1이면 정상 종료, -1이면 에러 발생.
     """
     points = _r2t(rpoints)
     new_line = splitLine(points[0], points[1], where, is_horizontal)
@@ -113,20 +113,20 @@ def append_point_coordinate_line(contour, rpoints, where, is_horizontal):
     return 1
 
 def append_point_rate_line(contour, rpoints, rate):
-    """ 직선을 비율로 나누어 점을 추가하는 함수
+    """ 직선을 비율로 나누어 점을 추가하는 함수.
 
     Args:
         contour:: RContour object
-            robofont에서 사용하는 contour object인 RContour
+            robofont에서 사용하는 contour object인 RContour.
         rpoints:: [RPoint object, ...]
             robofont에서 사용하는 point object인 RPoint의 list[직선의 시작점, 직선의 끝점]
-            순으로 구성 필요, 직선의 시작점은 contour의 방향상 가장 먼저 나오는 점
+            순으로 구성 필요, 직선의 시작점은 contour의 방향상 가장 먼저 나오는 점.
         rate:: float
-            0 ~ 1 사이의 나눌 비율
+            0 ~ 1 사이의 나눌 비율.
 
     Returns:
         status flag:: int
-            1이면 정상 종료, -1이면 에러 발생
+            1이면 정상 종료, -1이면 에러 발생.
     """
 
     if not (contour and rpoints and 0 <= rate <= 1):
