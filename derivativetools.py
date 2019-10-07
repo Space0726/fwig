@@ -142,4 +142,4 @@ def append_point_by_derivative(contour_points, target_index, target_contour):
 
     # Append point at target curve.
     if points_to_append and rate:
-        appendtools.appendPointRate(target_contour, points_to_append, rate)
+        appendtools.append_point_rate(target_contour, points_to_append, rate)
