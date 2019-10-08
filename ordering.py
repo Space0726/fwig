@@ -19,6 +19,9 @@ def get_max_penpair(glyph):
     Args:
         glyph:: RGlyph
             The RGlyph object that you want to know.
+
+    Returns:
+        maximum value of penPair:: str
     """
     return max(it.chain(*[_get_penpair_values(contour) for contour in glyph.contours]))
 
@@ -28,6 +31,9 @@ def get_min_penpair(glyph):
     Args:
         glyph:: RGlyph
             The RGlyph object that you want to know.
+
+    Returns:
+        minimum value of penPair:: str
     """
     return min(it.chain(*[_get_penpair_values(contour) for contour in glyph.contours]))
 
@@ -39,6 +45,20 @@ class Ordering:
         glyph:: RGlyph
         *attributes:: *str
         padding:: int (default is 0)
+
+    Examples:
+        class OrderingExample(Ordering):
+            def __init__(self, glyph, *attributes, padding=0):
+                super().__init__(glyph, *attributes, padding=padding)
+
+            # To add 3 at penPair, dependX and dependY if glyph name contains 'ABCD'
+            def calculate_padding(self):
+                if 'ABCD' in self.glyph.name:
+                    self.padding += 3
+
+
+        od = OrderingExample(CurrentGlyph(), 'penPair', 'dependX', 'dependY')
+        od.attributes_ordering()
     """
     __metaclass__ = abc.ABCMeta
 
