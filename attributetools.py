@@ -101,6 +101,26 @@ def del_attr(point, attribute):
     else:
         point.name = dict2name(attributes)
 
+def get_all_points(glyph, offcurve=False):
+    if not offcurve:
+        return set([point for contour in glyph.contours \
+                          for point in contour.points \
+                          if point.type != 'offcurve'])
+    else:
+        return set([point for contour in glyph.contours \
+                          for point in contour.points])
+
+def get_penpair_dict(glyph):
+    penpair_dict = {}
+    all_points = get_all_point(glyph)
+    for point in all_points:
+        penpair = at.get_attr(point, 'penPair')[1:-1]
+        if penpair in penpair_dict:
+            penpair_dict[penpair].append(point)
+        else:
+            penpair_dict[penpair] = [point]
+    return penpair_dict
+
 
 class Attribute:
     def __init__(self, point):

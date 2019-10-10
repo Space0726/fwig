@@ -1,3 +1,4 @@
+from itertools import chain
 from . import attributetools as at
 
 def _find_depend_target(point, penpair_dict, point_list):
@@ -35,26 +36,11 @@ def _calculate_inclination(point_1, point_2):
     except ZeroDivisionError:
         return float('inf')
 
-def _get_all_point(glyph):
-    return set([point for contour in glyph.contours \
-                      for point in contour.points \
-                      if point.type != 'offcurve'])
-
-def make_penpair_dict(all_points):
-    penpair_dict = {}
-    for point in all_points:
-        penpair = at.get_attr(point, 'penPair')[1:-1]
-        if penpair in penpair_dict:
-            penpair_dict[penpair].append(point)
-        else:
-            penpair_dict[penpair] = [point]
-    return penpair_dict
-
 def add_depend_attribute(glyph):
     if glyph.name.find('V') != -1 or not glyph.hasOverlap():
         return None
-    all_points = _get_all_point(glyph)
-    penpair_dict = make_penpair_dict(all_points)
+    penpair_dict = at.get_penpair_dict(glyph)
+    all_points = chain(*penpair_dict.values())
     for contour in glyph.contours:
         for i, current_point in enumerate(contour.points):
             previous_point = contour.points[i-1]
