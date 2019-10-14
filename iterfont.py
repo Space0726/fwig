@@ -35,7 +35,7 @@ def iter_with_func(iter_func):
     """
     @wraps(iter_func)
     def call_func_with_cond(data, *args, **kwargs):
-        objects = func(data, *args, **kwargs)
+        objects = iter_func(data, *args, **kwargs)
         for object_ in objects:
             for function in args:
                 condition = kwargs.get(function.__name__)
