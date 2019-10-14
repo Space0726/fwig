@@ -114,7 +114,7 @@ def get_penpair_dict(glyph):
     penpair_dict = {}
     all_points = get_all_points(glyph)
     for point in all_points:
-        penpair = at.get_attr(point, 'penPair')[1:-1]
+        penpair = get_attr(point, 'penPair')[1:-1]
         if penpair in penpair_dict:
             penpair_dict[penpair].append(point)
         else:
