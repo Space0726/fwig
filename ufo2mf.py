@@ -716,3 +716,10 @@ def get_font_width(DIR_UFO, glifs):
     fontWidth = max(widthDic.keys(), key=(lambda k: widthDic[k]))
 
     return float(fontWidth)
+
+
+print("111")
+if __name__ == "__main__":
+    print(sys.argv)
+    ufo2mf(sys.argv[1], sys.argv[2])
+
