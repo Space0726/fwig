@@ -40,7 +40,6 @@ def get_round_points(glyph, *functions, **conditions):
 
 def add_round_attr(point):
     at.add_attr(point, "round", 1)
-    point.glyph.setChanged()
 
 if __name__ == "__main__":
     font = CurrentFont()

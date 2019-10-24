@@ -44,7 +44,6 @@ def add_serif(glyph):
             target_point = get_serif_point(contour)
             at.add_attr(target_point, 'serif', serif_cnt)
             serif_cnt += 1
-            glyph.setChanged()
             # for safety
             if serif_cnt > 2:
                 break

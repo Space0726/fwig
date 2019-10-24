@@ -85,17 +85,20 @@ def set_attr(point, attribute, value):
     if attribute in attributes:
         attributes[attribute] = value
         point.name = dict2name(attributes)
+        point.glyph.setChanged()
 
 def add_attr(point, attribute, value):
     attributes = name2dict(point.name)
     if attribute not in attributes:
         attributes[attribute] = value
         point.name = dict2name(attributes)
+        point.glyph.setChanged()
 
 def del_attr(point, attribute):
     attributes = name2dict(point.name)
     try:
         del(attributes[attribute])
+        point.glyph.setChanged()
     except KeyError:
         return None
     else:
@@ -139,16 +142,19 @@ class Attribute:
     def set_attr(self, attribute, value):
         if attribute in self.attribute:
             self.attribute[attribute] = value
+            self.point.glyph.setChanged()
             self._update_attr()
 
     def add_attr(self, attribute, value):
         if attribute not in self.attribute:
             self.attribute[attribute] = value
+            self.point.glyph.setChanged()
             self._update_attr()
 
     def del_attr(self, attribute):
         try:
             del(self.attribute[attribute])
+            self.point.glyph.setChanged()
         except KeyError:
             return None
         else:
