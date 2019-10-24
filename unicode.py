@@ -45,10 +45,10 @@ class Uni2Kor():
     def __repr__(self):
         if self.code is None:
             return ""
-        return hex(self.code).upper()[2:] + ': ' \
+        return '(' + hex(self.code).upper()[2:] + ': ' \
                + self.first_char + ' + ' \
                + self.middle_char + ' + ' \
-               + self.final_char
+               + self.final_char + ')'
 
     def get_hex_code(self):
         """ Returns Unicode in hexadecimal format. """
@@ -63,7 +63,7 @@ class Uni2Kor():
         first_idx = (code - 0xAC00) // 588
         middle_idx = (code - 0xAC00 - 588*first_idx) // 28
         final_idx = (code - 0xAC00) % 28
-        return [Uni2Char.first[first_idx], Uni2Char.middle[middle_idx], Uni2Char.final[final_idx]]
+        return [Uni2Kor.first[first_idx], Uni2Kor.middle[middle_idx], Uni2Kor.final[final_idx]]
 
     def get_char_dict(self, to_hex=False):
         """ 유니코드 및 글자 구성요소들을 딕셔너리 자료형으로 리턴 """
