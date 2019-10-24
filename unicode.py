@@ -50,6 +50,34 @@ class Uni2Kor():
                + self.middle_char + ' + ' \
                + self.final_char + ')'
 
+    @classmethod
+    def get_sound(self, sound_name, value):
+        """ Return sound character that matched with value.
+
+        Args:
+            sound_name:: str
+                The name of sound. It will be 'first', 'middle' or 'final'.
+
+            value:: int
+                It is the result of calculating Unicode with Korean characters for each sound.
+                See the Uni2Kor class' field dictionary.
+
+        Returns:
+            matched character:: str
+
+        Examples:
+            print(Uni2Kor.get_sound('first', 0))
+            # Result is 'ㄱ'
+        """
+        if sound_name == 'first':
+            return self.first[value]
+        elif sound_name == 'middle':
+            return self.middle[value]
+        elif sound_name == 'final':
+            return self.final[value]
+        else:
+            raise ValueError("Invalid sound name")
+
     def get_hex_code(self):
         """ Returns Unicode in hexadecimal format. """
         if self.code is None:
