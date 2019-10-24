@@ -34,10 +34,6 @@ class YullyeoTagger(Uni2Kor):
         elif name.endswith('F'):
             self.char_tag = (self.code - 0xAC00) % 28
 
-    def _calc_center(self, point):
-        box = point.contour.box
-        return (box[0] + box[2]) / 2, (box[1] + box[3]) / 2
-
     def name2code(self, name):
         return int(name.split('_')[0], 16)
 
@@ -47,12 +43,31 @@ class YullyeoTagger(Uni2Kor):
     #             attr.add_attr('char', self.char_tag)
     #             if self.is_double:
     #                 sound = attr.get_attr('sound')
-    #                 center_x = self._calc_center(point)[0]
+    #                 center_x = _calc_center(point)[0]
     #                 if (sound == 'final' and center_x < 290) or (sound == 'first' and center_x < 0):
+    # TODO: use _separate_contours()
     #                     attr.add_attr('double', 'left')
     #                 else:
     #                     attr.add_attr('double', 'right')
 
+
+def _calc_center(point):
+    box = point.contour.box
+    return (box[0] + box[2]) / 2, (box[1] + box[3]) / 2
+
+def _separate_contours(glyph):
+    centers = {contour:_calc_center(contour.points[0])[0] for contour in glyph.contours}
+    separated_dict = {}
+    center_len = len(centers.keys())
+    if center_len == 2 or center_len == 4:
+        contours = sorted(centers.items(), key=lambda x: x[1])
+        separated_dict['left'] = [contour for i, contour in enumerate(contours)
+                                          if i < center_len / 2]
+        separated_dict['right'] = [contour for i, contour in enumerate(contours)
+                                           if i >= center_len / 2]
+
+    return separated_dict
+    
 
 glyph = CurrentGlyph()
 point = glyph.contours[0].points[0]
