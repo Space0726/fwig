@@ -7,7 +7,7 @@ Last Modified Date: 2019/10/21
 
 Created by Seongju Woo.
 """
-class Uni2Kor():
+class Uni2Kor:
     """ Convert unicode to Hangul(Korean) characters.
 
     Args:
@@ -40,6 +40,10 @@ class Uni2Kor():
         19:'ㅅ', 20:'ㅆ', 21:'ㅇ', 22:'ㅈ', 23:'ㅊ', 24:'ㅋ', 25:'ㅌ', 26:'ㅍ', 27:'ㅎ'
     }
 
+    vowel_horizontal = [8, 12, 13, 17, 18]
+    vowel_vertical = [0, 1, 2, 3, 4, 5, 6, 7, 20]
+    vowel_double = [9, 10, 11, 14, 15, 16, 19]
+
     def __init__(self, code=None):
        self.code = code
        if self.code is None:
@@ -55,7 +59,28 @@ class Uni2Kor():
                + self.middle_char + ' + ' \
                + self.final_char + ')'
 
-    @classmethod
+    @staticmethod
+    def parse_unicode(self, code):
+        """ Parse unicode to character information.
+
+        Args:
+            code:: int
+                A unicode that you want to parse.
+
+        Returns:
+            Uni2Kor's sound dictionary keys:: (int, int, int)
+                Tuple of Uni2Kor's sound dictionary keys. The order is first, middle, final.
+        """
+        if not 0xAC00 <= code <= 0xD7A3:
+            raise ValueError("Unicode is not in Korean range")
+
+        first_idx = (code - 0xAC00) // 588
+        middle_idx = (code - 0xAC00 - 588*first_idx) // 28
+        final_idx = (code - 0xAC00) % 28
+
+        return (first_idx, middle_idx, final_idx)
+
+    @staticmethod
     def get_sound(self, sound_name, value):
         """ Return sound character that matched with value.
 
@@ -75,13 +100,41 @@ class Uni2Kor():
             'ㄱ'
         """
         if sound_name == 'first':
-            return self.first[value]
+            return Uni2Kor.first[value]
         elif sound_name == 'middle':
-            return self.middle[value]
+            return Uni2Kor.middle[value]
         elif sound_name == 'final':
-            return self.final[value]
+            return Uni2Kor.final[value]
         else:
             raise ValueError("Invalid sound name")
+
+    @staticmethod
+    def get_form_type(self, code):
+        """ Returns form type of character that converted from unicode.
+
+        Args:
+            code:: int (default)
+                A unicode that you want to get form type.
+
+        Returns:
+            types of form:: int
+        """
+        _, middle_idx, final_idx = Uni2Kor.parse_unicode(code)
+
+        if final_idx == 0:
+            if middle_idx in Uni2Kor.vowel_vertical:
+                return 1
+            elif middle_idx in Uni2Kor.vowel_horizontal:
+                return 3
+            elif middle_idx in Uni2Kor.vowel_double:
+                return 5
+        else:
+            if middle_idx in Uni2Kor.vowel_vertical:
+                return 2
+            elif middle_idx in Uni2Kor.vowel_horizontal:
+                return 4
+            elif middle_idx in Uni2Kor.vowel_double:
+                return 6
 
     def get_hex_code(self):
         """ Returns Unicode in hexadecimal format.
@@ -105,9 +158,8 @@ class Uni2Kor():
         """
         if code is None:
             return [self.first_char, self.middle_char, self.final_char]
-        first_idx = (code - 0xAC00) // 588
-        middle_idx = (code - 0xAC00 - 588*first_idx) // 28
-        final_idx = (code - 0xAC00) % 28
+        first_idx, middle_idx, final_idx = Uni2Kor.parse_unicode(code)
+
         return [Uni2Kor.first[first_idx], Uni2Kor.middle[middle_idx], Uni2Kor.final[final_idx]]
 
     def get_char_dict(self, to_hex=False):
