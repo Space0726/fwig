@@ -8,6 +8,7 @@ class YullyeoTagger(Uni2Kor):
         self._init_char_tag()
         self._init_points_attr()
         self._init_char()
+        self._init_form_type()
         self._init_is_double()
 
     def _init_points_attr(self):
@@ -37,6 +38,10 @@ class YullyeoTagger(Uni2Kor):
         elif name.endswith('F'):
             self.char_tag = (self.code - 0xAC00) % 28
 
+    def _init_form_type(self):
+        code = int(self.glyph.name.split('_')[0], 16)
+        self.form_type = Uni2Kor.get_form_type(code)
+
     def _separate_contours(self):
         centers = {contour:_calc_center(contour.points[0])[0] for contour in self.glyph.contours}
         separated_dict = {}
@@ -61,6 +66,7 @@ class YullyeoTagger(Uni2Kor):
             self._separate_contours()
         for point, attr in points_attr:
             attr.add_attr('char', self.char_tag)
+            attr.add_attr('formType', self.form_type)
             if self.is_double and attr.get_attr('double') is None:
                 sound = attr.get_attr('sound')
                 center_x = _calc_center(point)[0]
