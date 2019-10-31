@@ -22,7 +22,7 @@ def _make_lower_string(string):
 def get_linear_function(coordinates_1, coordinates_2, x_or_y):
     """ Returns a linear function created from coordinates.
 
-    Create a linear function using the two coordinates you entered.
+    Creates a linear function using the two coordinates you entered.
     Type 'x' at x_or_y if you want to create a function for x
     or Type 'y' at x_or_y if you want to create a function for y.
 

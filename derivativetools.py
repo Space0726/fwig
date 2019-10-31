@@ -20,9 +20,9 @@ def _is_curve_meet(curve_1, curve_2):
     return False
 
 def calculate_derivative(contour_points, target_index):
-    """ Calculate derivative.
+    """ Calculates derivative.
 
-    Calculate the derivative of the current point(contour_points[target_index])
+    Calculates the derivative of the current point(contour_points[target_index])
     and returned it.
 
     Args:
@@ -35,15 +35,15 @@ def calculate_derivative(contour_points, target_index):
         derivative value:: int
             The result of derivative calculating.
     """
-    # Make currrent point's bezier instance.
+    # Makes currrent point's bezier instance.
     nodes = np.asfortranarray([
         [float(contour_points[target_index+i].x) for i in range(-3, 1)],
         [float(contour_points[target_index+i].y) for i in range(-3, 1)]
         ])
-    # Extend the curve for the derivative function.
+    # Extends the curve for the derivative function.
     curve = bezier.Curve(nodes, degree=3).specialize(0, 1.5)
 
-    # Calculate two x value for the derivative function.
+    # Calculates two x value for the derivative function.
     # These are the values from the original value plus and minus the very
     # small value(1e-4).
     current_x, _ = contour_points[target_index].position
@@ -57,17 +57,17 @@ def calculate_derivative(contour_points, target_index):
         [-1000, 1000]
         ]), degree=1)
 
-    # Find the y value that corresponds to the x value.
+    # Finds the y value that corresponds to the x value.
     prev_derivative = curve.evaluate(curve.intersect(line_1)[0, :][0])[1][0]
     next_derivative = curve.evaluate(curve.intersect(line_2)[0, :][0])[1][0]
 
-    # Return derivative function value.
+    # Returns derivative function value.
     return (prev_derivative-next_derivative) / (2*delta_x)
 
 def append_point_by_derivative(contour_points, target_index, target_contour):
-    """ Append point to opposite curve by using derivative.
+    """ Appends point to opposite curve by using derivative.
 
-    Append point to opposite curve using line with gradient(by derivative)
+    Appends point to opposite curve using line with gradient(by derivative)
     for pairing. It is recommended to use this function from inside(derivative)
     to outside(append point).
 
@@ -100,11 +100,11 @@ def append_point_by_derivative(contour_points, target_index, target_contour):
     x_value, y_value = contour_points[target_index].position
 
     try:
-        # Calculate gradient by derivative.
+        # Calculates gradient by derivative.
         gradient = -1 / calculate_derivative(contour_points, target_index)
         # Line's equation.
         linear_function = lambda x: gradient*x + y_value - (x_value*gradient)
-        # Extend 500 up and down from standard point.
+        # Extends 500 up and down from standard point.
         line = bezier.Curve(np.asfortranarray([
             [x_value+500, x_value-500],
             [linear_function(x_value+500), linear_function(x_value-500)]
@@ -115,7 +115,7 @@ def append_point_by_derivative(contour_points, target_index, target_contour):
             [float(y_value+500), float(y_value-500)]
             ]), degree=1)
 
-    # Find what curve in target contour is meeted with line.
+    # Finds what curve in target contour is meeted with line.
     for i, _ in enumerate(target_contour_points):
         if i == target_index and target_contour_points == contour_points:
             continue
@@ -133,13 +133,13 @@ def append_point_by_derivative(contour_points, target_index, target_contour):
                 meeting_point = tuple(meeting_object.flatten())
                 new_distance = _calculate_distance( \
                         contour_points[target_index].position, meeting_point)
-                # Find nearest curve.
+                # Finds nearest curve.
                 if new_distance < distance:
                     distance = new_distance
                     points_to_append = [target_contour_points[i+j] \
                                         for j in range(-3, 1)]
                     rate = curve.locate(meeting_object)
 
-    # Append point at target curve.
+    # Appends point at target curve.
     if points_to_append and rate:
         appendtools.append_point_rate(target_contour, points_to_append, rate)

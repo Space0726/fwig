@@ -1,6 +1,6 @@
-""" Call functions with RFont object's children.
+""" Calls functions with RFont object's children.
 
-Call functions with RFont object's children. RFont object's child is one of the
+Calls functions with RFont object's children. RFont object's child is one of the
 RGlyph, RContour and RPoint. This module helps you to iterate RFont object easily.
 
 Last modified date: 2019/09/26
@@ -48,7 +48,7 @@ def iter_with_func(iter_func):
 
 @iter_with_func
 def point_generator(font, *functions, **conditions):
-    """ Call functions with RPoint objects in RFont object.
+    """ Calls functions with RPoint objects in RFont object.
 
     Args:
         font:: RFont
@@ -71,7 +71,7 @@ def point_generator(font, *functions, **conditions):
 
 @iter_with_func
 def contour_generator(font, *functions, **conditions):
-    """ Call functions with RContour objects in RFont object.
+    """ Calls functions with RContour objects in RFont object.
 
     Args:
         font:: RFont
@@ -93,7 +93,7 @@ def contour_generator(font, *functions, **conditions):
 
 @iter_with_func
 def glyph_generator(font, *functions, **conditions):
-    """ Call functions with RGlyph objects in RFont object.
+    """ Calls functions with RGlyph objects in RFont object.
 
     Args:
         font:: RFont

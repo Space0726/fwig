@@ -44,7 +44,7 @@ class Sound:
         pass
 
     def add_sound_attribute(self, add_sound=True):
-        """ Add sound attribute at first point of the glyph.
+        """ Adds sound attribute at first point of the glyph.
 
         Args:
             add_sound:: bool

@@ -1,4 +1,4 @@
-""" Convert unicode to character and letter components.
+""" Converts unicode to character and letter components.
 
 초성: first_char, 중성: middle_char, 종성: final_char
 0xAC00: '가' ~ 0xD7A3: '힣'
@@ -8,7 +8,7 @@ Last Modified Date: 2019/10/21
 Created by Seongju Woo.
 """
 class Uni2Kor:
-    """ Convert unicode to Hangul(Korean) characters.
+    """ Converts unicode to Hangul(Korean) characters.
 
     Args:
         code:: int (default is None)
@@ -61,7 +61,7 @@ class Uni2Kor:
 
     @staticmethod
     def parse_unicode(self, code):
-        """ Parse unicode to character information.
+        """ Parses unicode to character information.
 
         Args:
             code:: int
@@ -82,7 +82,7 @@ class Uni2Kor:
 
     @staticmethod
     def get_sound(self, sound_name, value):
-        """ Return sound character that matched with value.
+        """ Returns sound character that matched with value.
 
         Args:
             sound_name:: str

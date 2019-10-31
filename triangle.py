@@ -1,4 +1,4 @@
-""" Select points without pairs and make it into a triangle shape of two points.
+""" Selects points without pairs and makes it into a triangle shape of two points.
 
 Last modified date: 2019/08/28
 
@@ -8,11 +8,11 @@ from mojo.roboFont import RContour
 from stemfont import extendtools as et
 
 class Triangle:
-    """ Make an isolated point into a triangle shape of two points.
+    """ Makes an isolated point into a triangle shape of two points.
 
     This class is for selecting a points without pairs and making it into triangle shape
     of two points. This class can be used by inheritance. If you override three functions
-    (_is_triangle(), _find_triangle_point(), _find_opposite_points()), you can decide
+    (is_triagnle(), find_triangle_points(), find_opposite_points()), you can decide
     what point should be selected using your own criteria.
 
     Args:
@@ -43,31 +43,6 @@ class Triangle:
 
     def _update_points(self):
         self.points = self.contour.points
-
-    def _is_triangle(self) -> bool:
-        if len(self.points) % 2 or len(self.points) == 12:
-            return True
-        return False
-
-    def _find_triangle_point(self) -> list:
-        triangle_points = []
-        for i, _ in enumerate(self.points):
-            if self.points[i-1].y < self.points[i].y and \
-                    self.points[i].y > self.points[(i+1) % len(self.points)].y:
-                triangle_points.append(i)
-
-        return triangle_points
-
-    def _find_opposite_points(self, triangle_index: int) -> dict:
-        standard_value = self.points[triangle_index].y
-        opposite_points = []
-        for point in self.points:
-            if point.y > standard_value:
-                opposite_points.append(point)
-        opposite_points = sorted([point for point in opposite_points],
-                                 key=lambda p: abs(self.points[triangle_index].x - p.x))[:2]
-
-        return self._classify_right_and_left(tuple(opposite_points))
 
     def _get_max_penpair(self):
         max_penpair = 0
@@ -115,17 +90,66 @@ class Triangle:
     def _get_number_of_all_points(self):
         return sum([len(contour.bPoints) for contour in self.contour.getParent().contours])
 
+    def is_triagnle(self) -> bool:
+        """ Determines whether the contour should make a triangle shape.
+
+        Returns:
+            whether it needs to make:: bool
+                Returns True if contour needs to make a triangle shape.
+        """
+        if len(self.points) % 2 or len(self.points) == 12:
+            return True
+        return False
+
+    def find_triangle_points(self) -> list:
+        """ Finds points that need to make into a triangle shape.
+
+        Returns:
+            triangle_points:: list
+                The list of triangle points that need to make into a triangle shape.
+                Points are RPoint objects.
+        """
+        triangle_points = []
+        for i, _ in enumerate(self.points):
+            if self.points[i-1].y < self.points[i].y and \
+                    self.points[i].y > self.points[(i+1) % len(self.points)].y:
+                triangle_points.append(i)
+
+        return triangle_points
+
+    def find_opposite_points(self, triangle_index: int) -> dict:
+        """ Finds opposite side points of the triangle shape.
+
+        Args:
+            triangle_index:: int
+                RPoint object's index in RContour.points that needs to make into
+                a triangle shape.
+
+        Returns:
+            opposite points of triangle shape:: dict
+                Two RPoint objects with 'right' and 'left' keys.
+        """
+        standard_value = self.points[triangle_index].y
+        opposite_points = []
+        for point in self.points:
+            if point.y > standard_value:
+                opposite_points.append(point)
+        opposite_points = sorted([point for point in opposite_points],
+                                 key=lambda p: abs(self.points[triangle_index].x - p.x))[:2]
+
+        return self._classify_right_and_left(tuple(opposite_points))
+
     def make_triangle(self, add_penpair=True):
-        """ Make point into triangle shape of two points.
+        """ Makes point into triangle shape of two points.
 
         Args:
             add_penpair:: bool (default is True)
                 If it is True, penpair attributes are added. If you do not want to
                 add penpair attribute, input False.
         """
-        if not self._is_triangle():
+        if not self.is_triagnle():
             return
-        triangle_indexes = self._find_triangle_point()
+        triangle_indexes = self.find_triangle_points()
         if len(triangle_indexes) > 1 and triangle_indexes[0] < triangle_indexes[1]:
             triangle_indexes[1] += 1
 
@@ -140,7 +164,7 @@ class Triangle:
                                      type='line',
                                      point=self.points[triangle_index])
             self._update_points()
-            opposite_points_dict = self._find_opposite_points(triangle_index)
+            opposite_points_dict = self.find_opposite_points(triangle_index)
             prev_func = et.get_linear_function(self.points[triangle_index-1].position,
                                                self.points[triangle_index].position, 'x')
             next_func = et.get_linear_function(self.points[triangle_index+1].position,
