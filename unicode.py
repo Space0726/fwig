@@ -59,8 +59,8 @@ class Uni2Kor:
                + self.middle_char + ' + ' \
                + self.final_char + ')'
 
-    @staticmethod
-    def parse_unicode(self, code):
+    @classmethod
+    def parse_unicode(cls, code):
         """ Parses unicode to character information.
 
         Args:
@@ -80,8 +80,8 @@ class Uni2Kor:
 
         return (first_idx, middle_idx, final_idx)
 
-    @staticmethod
-    def get_sound(self, sound_name, value):
+    @classmethod
+    def get_sound(cls, sound_name, value):
         """ Returns sound character that matched with value.
 
         Args:
@@ -100,16 +100,16 @@ class Uni2Kor:
             'ㄱ'
         """
         if sound_name == 'first':
-            return Uni2Kor.first[value]
+            return cls.first[value]
         elif sound_name == 'middle':
-            return Uni2Kor.middle[value]
+            return cls.middle[value]
         elif sound_name == 'final':
-            return Uni2Kor.final[value]
+            return cls.final[value]
         else:
             raise ValueError("Invalid sound name")
 
-    @staticmethod
-    def get_form_type(self, code):
+    @classmethod
+    def get_form_type(cls, code):
         """ Returns form type of character that converted from unicode.
 
         Args:
@@ -119,21 +119,21 @@ class Uni2Kor:
         Returns:
             types of form:: int
         """
-        _, middle_idx, final_idx = Uni2Kor.parse_unicode(code)
+        _, middle_idx, final_idx = cls.parse_unicode(code)
 
         if final_idx == 0:
-            if middle_idx in Uni2Kor.vowel_vertical:
+            if middle_idx in cls.vowel_vertical:
                 return 1
-            elif middle_idx in Uni2Kor.vowel_horizontal:
+            elif middle_idx in cls.vowel_horizontal:
                 return 3
-            elif middle_idx in Uni2Kor.vowel_double:
+            elif middle_idx in cls.vowel_double:
                 return 5
         else:
-            if middle_idx in Uni2Kor.vowel_vertical:
+            if middle_idx in cls.vowel_vertical:
                 return 2
-            elif middle_idx in Uni2Kor.vowel_horizontal:
+            elif middle_idx in cls.vowel_horizontal:
                 return 4
-            elif middle_idx in Uni2Kor.vowel_double:
+            elif middle_idx in cls.vowel_double:
                 return 6
 
     def get_hex_code(self):

@@ -39,7 +39,7 @@ def ufo2mf(destPath, ufoPath=None):
     return None
 
 class Point:
-    def __init__(self.):
+    def __init__(self):
         self.name = ""
         self.idx = ""
         self.type = ""
