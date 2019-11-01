@@ -4,7 +4,7 @@ Last modified date: 2019/09/11
 
 Created by Seongju Woo.
 """
-from stemfont import ordering as od
+from stemfont.attributing import ordering as od
 
 class YullyeoOrdering(od.Ordering):
     def __init__(self, glyph, *attributes, padding=0):

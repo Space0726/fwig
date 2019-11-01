@@ -1,5 +1,5 @@
-from stemfont import iterfont
-from stemfont import attributetools as at
+from stemfont.tools import iterfont
+from stemfont.tools import attributetools as at
 
 def is_serif_contour(glyph):
     return glyph.name.find('V') != -1

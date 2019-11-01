@@ -6,7 +6,7 @@ Created by Seongju Woo.
 """
 import abc
 from mojo.roboFont import RGlyph
-from . import attributetools as at
+from stemfont.tools import attributetools as at
 
 class Sound:
     """ This class is for adding sound attribute at points.

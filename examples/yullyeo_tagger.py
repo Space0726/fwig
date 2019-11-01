@@ -1,5 +1,5 @@
-from stemfont.unicode import Uni2Kor
-from stemfont import attributetools as at
+from stemfont.tools.unicode import Uni2Kor
+from stemfont.tools import attributetools as at
 
 class YullyeoTagger(Uni2Kor):
     def __init__(self, glyph):
