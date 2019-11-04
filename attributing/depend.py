@@ -1,5 +1,5 @@
 from itertools import chain
-from . import attributetools as at
+from stemfont.tools import attributetools as at
 
 def _find_depend_target(point, penpair_dict, point_list):
     pair_points = penpair_dict[at.get_attr(point, 'penPair')[1:-1]]

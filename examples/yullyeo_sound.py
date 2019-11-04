@@ -4,7 +4,7 @@ Last modified date: 2019/09/11
 
 Created by Seongju Woo.
 """
-from stemfont import sound
+from stemfont.attributing import sound
 
 class YullyeoSound(sound.Sound):
     def __init__(self, glyph):

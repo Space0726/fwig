@@ -8,7 +8,7 @@ import math
 import numpy as np
 import bezier
 from mojo.roboFont import RContour, RPoint
-from . import appendtools
+from stemfont.tools import appendtools
 
 def _calculate_distance(point_1, point_2):
     return math.sqrt(pow(point_1[0]-point_2[0], 2)
