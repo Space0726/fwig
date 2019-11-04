@@ -50,17 +50,17 @@ def attr2name(path):
                 if point.get("name") is not None:
                     continue
                 data = ""
-                attr =[]
+                attr = []
                 for a in point.attrib:
                     if a == 'x' or a == 'y' or a == 'type' or a == 'smooth':
                         continue
-                    if not data:
+                    if data:
                         data += ","
                     data += "'" + a + "':'" + point.get(a) + "'" 
                     attr.append(a)
                 for x in attr:
                     point.attrib.pop(x)
-                if not data:
+                if data:
                     point.set("name",data)
 
         tree.write(path + "/" + file, encoding="UTF-8", xml_declaration=True)
