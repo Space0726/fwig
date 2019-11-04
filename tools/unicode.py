@@ -84,7 +84,6 @@ class Uni2Kor:
         Args:
             sound_name:: str
                 The name of sound. It will be 'first', 'middle' or 'final'.
-
             value:: int
                 It is the result of calculating Unicode with Korean characters for each sound.
                 See the Uni2Kor class' field dictionary.
