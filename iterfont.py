@@ -15,7 +15,7 @@ def iter_with_func(iter_func):
 
     A decorator that iterate font objects with functions. Functions can
     be used with conditions. This conditions must be a predicate(functions
-    that return True or False).
+    that returns True or False).
 
     Examples:
         # For all glyph objects in current font.
@@ -53,15 +53,19 @@ def point_generator(font, *functions, **conditions):
     Args:
         font:: RFont
         *functions:: (function object, ...)
+            This functions must have only one parameter, which is an RPoint object.
         **conditions:: {str: function object, ...}
             The key of conditions is function name and the value is function object.
+            This function object must be predicate and have only one parameter,
+            which is an RPoint object. If this function object returns True, the key
+            of conditions will be executed.
 
     Examples:
-        def print_func(data):
-            print(data)
+        def print_func(point):
+            print(point)
 
-        def print_condition(data):
-            return isinstance(data, str)
+        def print_condition(point):
+            return point.index == 3
 
         point_generator(CurrentFont(), print_func, print_func=print_condition)
     """
@@ -76,15 +80,19 @@ def contour_generator(font, *functions, **conditions):
     Args:
         font:: RFont
         *functions:: (function object, ...)
+            This functions must have only one parameter, which is an RContour object.
         **conditions:: {str: function object, ...}
             The key of conditions is function name and the value is function object.
+            This function object must be predicate and have only one parameter,
+            which is an RContour object. If this function object returns True, the key
+            of conditions will be executed.
 
     Examples:
-        def print_func(data):
-            print(data)
+        def print_func(contour):
+            print(contour)
 
-        def print_condition(data):
-            return isinstance(data, str)
+        def print_condition(contour):
+            return len(contour.points) == 3
 
         contour_generator(CurrentFont(), print_func, print_func=print_condition)
     """
@@ -98,15 +106,19 @@ def glyph_generator(font, *functions, **conditions):
     Args:
         font:: RFont
         *functions:: (function object, ...)
+            This functions must have only one parameter, which is an RGlyph object.
         **conditions:: {str: function object, ...}
             The key of conditions is function name and the value is function object.
+            This function object must be predicate and have only one parameter,
+            which is an RGlyph object. If this function object returns True, the key
+            of conditions will be executed.
 
     Examples:
-        def print_func(data):
-            print(data)
+        def print_func(glyph):
+            print(glyph.name)
 
-        def print_condition(data):
-            return isinstance(data, str)
+        def print_condition(glyph):
+            return glyph.name.startswith('uni')
 
         glyph_generator(CurrentFont(), print_func, print_func=print_condition)
     """

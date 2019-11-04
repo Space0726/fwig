@@ -18,9 +18,9 @@ class Uni2Kor:
         >>> uc = Uni2Char(0xAC00)
         >>> uc    # Print letter components
         'AC00: ㄱ + ㅏ'
-        >>> Uni2Char(0xAC00).get_chars()    # Save characters information to object.
+        >>> Uni2Char.get_chars(0xAC00)    # Use class method.
         ['ㄱ', 'ㅏ', None]
-        >>> Uni2Char().get_chars(0xAC00)    # Doesn't save, just convert it.
+        >>> Uni2Char(0xAC00).get_chars()    # Save characters information to object.
         ['ㄱ', 'ㅏ', None]
     """
     # 588 each
@@ -46,10 +46,7 @@ class Uni2Kor:
 
     def __init__(self, code=None):
        self.code = code
-       if self.code is None:
-           self.first_char, self.middle_char, self.final_char = None, None, None
-       else:
-           self.first_char, self.middle_char, self.final_char = self.get_chars(self.code)
+       self.first_char, self.middle_char, self.final_char = self.get_chars(self.code)
 
     def __repr__(self):
         if self.code is None:
@@ -136,16 +133,7 @@ class Uni2Kor:
             elif middle_idx in cls.vowel_double:
                 return 6
 
-    def get_hex_code(self):
-        """ Returns Unicode in hexadecimal format.
-
-        Returns:
-            unicode in hexadecimal format:: str
-        """
-        if self.code is None:
-            return ""
-        return hex(self.code).upper()[2:]
-
+    @classmethod
     def get_chars(self, code=None):
         """ Returns letter component of character that converted from unicode.
 
@@ -157,10 +145,20 @@ class Uni2Kor:
             letter component of character:: [str, str, str(or None)]
         """
         if code is None:
-            return [self.first_char, self.middle_char, self.final_char]
+            code = self.code
         first_idx, middle_idx, final_idx = Uni2Kor.parse_unicode(code)
 
         return [Uni2Kor.first[first_idx], Uni2Kor.middle[middle_idx], Uni2Kor.final[final_idx]]
+
+    def get_hex_code(self):
+        """ Returns Unicode in hexadecimal format.
+
+        Returns:
+            unicode in hexadecimal format:: str
+        """
+        if self.code is None:
+            return ""
+        return hex(self.code).upper()[2:]
 
     def get_char_dict(self, to_hex=False):
         """ Returns dictionary of unicode and letter component

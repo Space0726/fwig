@@ -1,5 +1,6 @@
 from stemfont.unicode import Uni2Kor
 from stemfont import attributetools as at
+from stemfont import iterfont
 
 class YullyeoTagger(Uni2Kor):
     def __init__(self, glyph):
@@ -60,7 +61,7 @@ class YullyeoTagger(Uni2Kor):
     def name2code(self, name):
         return int(name.split('_')[0], 16)
 
-    def add_tag(self):
+    def add_tags(self):
         points_attr = list(self.points_attr.items())
         if self.is_double:
             self._separate_contours()
@@ -83,5 +84,9 @@ def _calc_center(point):
 
 
 if __name__ == "__main__":
-    yt = YullyeoTagger(CurrentGlyph())
-    yt.add_tag()
+    def add_tags(glyph):
+        YullyeoTagger(glyph).add_tags()
+    def tag_cond(glyph):
+        return not glyph.name.startswith("uni")
+
+    iterfont.glyph_generator(CurrentFont(), add_tags, add_tags=tag_cond)
