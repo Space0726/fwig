@@ -32,12 +32,13 @@ class YullyeoTagger(Uni2Kor):
 
     def _init_char_tag(self):
         name = self.glyph.name
+        code = Uni2Kor.parse_unicode(self.code)
         if name.endswith('C'):
-            self.char_tag = (self.code - 0xAC00) // 588
+            self.char_tag = code[0]
         elif name.endswith('V'):
-            self.char_tag = (self.code - 0xAC00 - 588*((self.code-0xAC00) // 588)) // 28
+            self.char_tag = code[1]
         elif name.endswith('F'):
-            self.char_tag = (self.code - 0xAC00) % 28
+            self.char_tag = code[2]
 
     def _init_form_type(self):
         code = int(self.glyph.name.split('_')[0], 16)
@@ -46,7 +47,7 @@ class YullyeoTagger(Uni2Kor):
     def _separate_contours(self):
         centers = {contour:_calc_center(contour.points[0])[0] for contour in self.glyph.contours}
         separated_dict = {}
-        center_len = len(centers.values())
+        center_len = len(centers)
         if center_len == 2 or center_len == 4:
             contours = sorted(centers.items(), key=lambda x: x[1])
             separated_dict['left'] = [contour[0] for i, contour in enumerate(contours)
@@ -62,10 +63,9 @@ class YullyeoTagger(Uni2Kor):
         return int(name.split('_')[0], 16)
 
     def add_tags(self):
-        points_attr = list(self.points_attr.items())
-        if self.is_double:
+        if self.is_double and (self.char == 'ㄲ' or self.char == 'ㄸ'):
             self._separate_contours()
-        for point, attr in points_attr:
+        for point, attr in self.points_attr.items():
             attr.add_attr('char', self.char_tag)
             attr.add_attr('formType', self.form_type)
             if self.is_double and attr.get_attr('double') is None:
@@ -86,6 +86,7 @@ def _calc_center(point):
 if __name__ == "__main__":
     def add_tags(glyph):
         YullyeoTagger(glyph).add_tags()
+
     def tag_cond(glyph):
         return not glyph.name.startswith("uni")
 
