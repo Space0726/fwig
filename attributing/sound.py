@@ -5,7 +5,7 @@ Last modified data: 2019/09/11
 Created by Seongju Woo.
 """
 import abc
-from mojo.roboFont import RGlyph
+from fontParts.fontshell import RGlyph
 from stemfont.tools import attributetools as at
 
 class Sound:

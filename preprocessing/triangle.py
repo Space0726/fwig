@@ -4,7 +4,7 @@ Last modified date: 2019/08/28
 
 Created by Seongju Woo.
 """
-from mojo.roboFont import RContour
+from fontParts.fontshell import RContour
 from stemfont.tools import extendtools as et
 
 class Triangle:
@@ -27,7 +27,7 @@ class Triangle:
          /    /  \    \          /    /  \    \
         /    /    \    \        /    /    \    \
 
-        from mojo.roboFont import CurrentFont
+        from fontParts.world import CurrentFont
 
         f = CurrentFont()
         for o in f.glyphOrder:

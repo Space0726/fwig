@@ -1,4 +1,4 @@
-from mojo.roboFont import CurrentFont
+from fontParts.world import CurrentFont
 
 def make_component_current_font():
     f = CurrentFont()

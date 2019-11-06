@@ -1,7 +1,7 @@
 import os.path
 from xml.dom import minidom
 import sys
-from mojo.roboFont import CurrentFont, OpenFont
+from fontParts.world import CurrentFont, OpenFont
 import math
 
 def _is_glif(file_name):

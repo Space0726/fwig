@@ -6,7 +6,7 @@ Created by Seongju Woo.
 """
 import os
 import json
-from mojo.roboFont import RPoint
+from fontParts.fontshell import RPoint
 from xml.etree import ElementTree as et
 
 def name2attr(path):

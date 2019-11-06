@@ -6,7 +6,7 @@ Created by Seongju Woo.
 """
 import abc
 import itertools as it
-from mojo.roboFont import RGlyph
+from fontParts.fontshell import RGlyph
 from stemfont.tools import attributetools as at
 
 def _get_penpair_values(contour):
