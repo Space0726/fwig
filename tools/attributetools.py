@@ -6,7 +6,7 @@ Created by Seongju Woo.
 """
 import os
 import json
-from fontParts.fontshell import RPoint
+#from mojo.roboFont import RPoint
 from xml.etree import ElementTree as et
 
 def name2attr(path):
@@ -131,7 +131,15 @@ class Attribute:
         if point.name:
             self.attribute = name2dict(point.name)
         else:
-            self.attribute = {}
+            contour = point.contour
+            glyph = point.glyph
+            font = point.font
+            path = font.path
+            tree = et.parse(path + '/glyphs' + glyph.name)
+            glif = tree.getroot()
+            outline = glif.find('outline')
+            attribdict = outline[contour.index][point.index].attrib
+            self.attribute = attribdict
 
     def _update_attr(self):
         self.point.name = dict2name(self.attribute)

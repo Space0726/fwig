@@ -8,8 +8,7 @@ Last modified date: 2019/09/26
 Created by Seongju Woo.
 """
 from functools import wraps
-from fontParts.fontshell import RFont
-from fontParts.world import CurrentFont
+from mojo.roboFont import RFont, CurrentFont
 
 def iter_with_func(iter_func):
     """ Decorator for iterating over font objects with functions.
@@ -19,10 +18,9 @@ def iter_with_func(iter_func):
     that returns True or False).
 
     Examples:
-        from fontParts.world import CurrentFont
-
         # For all glyph objects in current font.
         # If glyph's name starts with 'AB', print glyph's name.
+
         def print_glyph(glyph):
             print(glyph)
 
@@ -63,8 +61,6 @@ def point_generator(font, *functions, **conditions):
             of conditions will be executed.
 
     Examples:
-        from fontParts.world import CurrentFont
-
         def print_func(point):
             print(point)
 
@@ -92,8 +88,6 @@ def contour_generator(font, *functions, **conditions):
             of conditions will be executed.
 
     Examples:
-        from fontParts.world import CurrentFont
-
         def print_func(contour):
             print(contour)
 
@@ -120,8 +114,6 @@ def glyph_generator(font, *functions, **conditions):
             of conditions will be executed.
 
     Examples:
-        from fontParts.world import CurrentFont
-        
         def print_func(glyph):
             print(glyph.name)
 

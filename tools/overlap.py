@@ -4,7 +4,7 @@ Last modified date: 2019/09/09
 
 Created by Seongju Woo.
 """
-from fontParts.world import CurrentFont
+from mojo.roboFont import CurrentFont
 
 def _is_overlap_other_contour(contours, target_contour):
     for contour in contours:
