@@ -964,13 +964,13 @@ def glyph2mf(glyphName, dirUFO, dirRadical, dirCombination, fontWidth, rfont):
                     distParam[0] = distParam[3] = ('x', 'x')
                     distParam[1] = distParam[2] = ('y', 'y')
                     for j in range(4):
-                        roundP.append(op[j] + ' ' + distForm1 % distParam[j] + ' ' + curveRate)
+                        roundP.append(' ' + op[j] + ' ' + distForm1 % distParam[j] + ' ' + curveRate)
                         roundBcp.append(roundP[-1] + ' ' + bcpRate)
                 elif pairIdx == nextIdx:
                     distParam[0] = distParam[3] = ('y', 'y')
                     distParam[1] = distParam[2] = ('x', 'x')
                     for j in range(4):
-                        roundP.append(op[j] + ' ' + distForm1 % distParam[j] + ' ' + curveRate)
+                        roundP.append(' ' + op[j] + ' ' + distForm1 % distParam[j] + ' ' + curveRate)
                         roundBcp.append(roundP[-1] + ' ' + bcpRate)
                 else:
                     for j in range(4):
@@ -978,20 +978,20 @@ def glyph2mf(glyphName, dirUFO, dirRadical, dirCombination, fontWidth, rfont):
                             roundP.append('')
                             roundBcp.append('')
                         else:
-                            roundP.append(op[j] + ' ' + distForm2 + ' ' + curveRate)
+                            roundP.append(' ' + op[j] + ' ' + distForm2 + ' ' + curveRate)
                             roundBcp.append(roundP[-1] + ' ' + bcpRate)
 
                 fp.write(
-                    '\t' + nameForm % ('x', 0, 'x') + ' ' + roundP[0] + ';\n\t' + nameForm % ('y', 0, 'y') + roundP[
+                    '\t' + nameForm % ('x', 0, 'x') + roundP[0] + ';\n\t' + nameForm % ('y', 0, 'y') + roundP[
                         1] + ';\n')
                 fp.write(
-                    '\t' + nameForm % ('x', 1, 'x') + ' ' + roundBcp[0] + ';\n\t' + nameForm % ('y', 1, 'y') + roundBcp[
+                    '\t' + nameForm % ('x', 1, 'x') + roundBcp[0] + ';\n\t' + nameForm % ('y', 1, 'y') + roundBcp[
                         1] + ';\n')
                 fp.write(
-                    '\t' + nameForm % ('x', 2, 'x') + ' ' + roundBcp[2] + ';\n\t' + nameForm % ('y', 2, 'y') + roundBcp[
+                    '\t' + nameForm % ('x', 2, 'x') + roundBcp[2] + ';\n\t' + nameForm % ('y', 2, 'y') + roundBcp[
                         3] + ';\n')
                 fp.write(
-                    '\t' + nameForm % ('x', 3, 'x') + ' ' + roundP[2] + ';\n\t' + nameForm % ('y', 3, 'y') + roundP[
+                    '\t' + nameForm % ('x', 3, 'x') + roundP[2] + ';\n\t' + nameForm % ('y', 3, 'y') + roundP[
                         3] + ';\n')
 
             fp.write('fi\n')
