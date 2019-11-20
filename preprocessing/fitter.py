@@ -48,8 +48,8 @@ def _get_intersect_points(original, line_dict):
             line_segment = bezier.Curve(nodes, degree=3)
         elif point.type == 'line':
             nodes = np.asfortranarray(
-                [[float(point.x), float(original.points[i-1].x)],
-                 [float(point.y), float(original.points[i-1].y)]])
+                [[float(point.x), float(original.points[idx-1].x)],
+                 [float(point.y), float(original.points[idx-1].y)]])
             line_segment = bezier.Curve(nodes, degree=1)
         for line, criteria in line_dict.items():
             intersect = line_segment.intersect(line)
@@ -92,11 +92,10 @@ def _seg2curve(points, start_idx, end_idx):
 def _append_points(original, intersect_points):
     for intersects in intersect_points.values():
         for start_point, end_point, locate in intersects:
-            print(start_point.position, start_point.index)
             curve_dict = _seg2curve(original.points, start_point.index, end_point.index)
-            for idx, curve in curve_dict.items():    # curve에 점이 존재하면 넣기
-                if curve.degree == 1: # 직선일 때
-                    if curve.nodes[0][0] == curve.nodes[0][-1]: # x = n의 형태일 때
+            for idx, curve in curve_dict.items():
+                if curve.degree == 1:
+                    if curve.nodes[0][0] == curve.nodes[0][-1]:
                         intersect_marker = bezier.Curve(np.asfortranarray(
                                                [[locate[0][0]-2, locate[0][0]]+2,
                                                 [locate[1][0], locate[1][0]]]), degree=1)
@@ -105,7 +104,7 @@ def _append_points(original, intersect_points):
                             curve_points = [original.points[idx+i] for i in range(0, -4, -1)]
                             apt.append_point_coordinate_line(original, curve_points, locate[1][0], True)
                             break
-                    else: # 기본 값은 x에 대한 점 추가
+                    else:
                         intersect_marker = bezier.Curve(np.asfortranarray(
                                                [[locate[0][0], locate[0][0]],
                                                 [locate[1][0]-2, locate[1][0]+2]]), degree=1)
@@ -114,7 +113,7 @@ def _append_points(original, intersect_points):
                             curve_points = [original.points[idx+i] for i in range(0, -4, -1)]
                             apt.append_point_coordinate_line(original, curve_points, locate[0][0], False)
                             break
-                elif curve.degree == 3: # 곡선일 때
+                elif curve.degree == 3:
                     if curve.nodes[0][0] == curve.nodes[0][1] == curve.nodes[0][-2] == curve.nodes[0][-1]:
                         intersect_marker = bezier.Curve(np.asfortranarray(
                                                [[locate[0][0]-2, locate[0][0]]+2,
@@ -165,13 +164,14 @@ def _fit_bcps(original, segment):
     segment.setChanged()
 
 def fit_curve(original, segment):
+    """ Fit segment to curve.
+        
+    Examples:
+        original = CurrentGlyph().contours[2]
+        segment = CurrentGlyph().contours[3]
+        fit_curve(original, segment)
+    """
     penpair_lines = _get_penpair_lines(segment)
     intersect_points = _get_intersect_points(original, penpair_lines)
     _append_points(original, intersect_points)
     _fit_bcps(original, segment)
-
-
-if __name__ == '__main__':
-    original = CurrentGlyph().contours[2]
-    segment = CurrentGlyph().contours[3]
-    fit_curve(original, segment)
