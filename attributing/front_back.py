@@ -1,5 +1,6 @@
 from stemfont.tools import attributetools as at
 from stemfont.tools import iterfont
+from fontParts.world import OpenFont
 
 def _get_penpair_dict(contour):
     penpair_dict = {}
@@ -23,7 +24,7 @@ def _get_front_back(contours):
     for contour in contours:
         penpair_dict = _get_penpair_dict(contour)
         for penpair, points in penpair_dict.items():
-            if abs(points[0].index - points[1].index) == 1 and \
+            if len(points) == 2 and abs(points[0].index - points[1].index) == 1 and \
                     all(map(criteria_1, points)) and not any(map(criteria_2, points)):
                 candidates.append(points)
     if len(candidates) == 2:
@@ -46,10 +47,12 @@ def add_front_back(glyph):
     #     front_back = _get_front_back(candidates)
 
     front_back = _get_front_back(glyph.contours)
-    for point in front_back['front']:
-        at.add_attr(point, 'stroke', 'begin')
-    for point in front_back['back']:
-        at.add_attr(point, 'stroke', 'end')
+
+    if front_back != {}:
+        for point in front_back['front']:
+            at.add_attr(point, 'stroke', 'begin')
+        for point in front_back['back']:
+            at.add_attr(point, 'stroke', 'end')
 
 def is_front_back(glyph):
     if glyph.name.startswith('uni'):
@@ -65,4 +68,7 @@ def is_front_back(glyph):
     #     return False
 
 if __name__ == '__main__':
-    iterfont.glyph_generator(CurrentFont(), add_front_back, add_front_back=is_front_back)
+    # iterfont.glyph_generator(CurrentFont(), add_front_back, add_front_back=is_front_back)
+    font = OpenFont('YullyeoM.ufo')
+    iterfont.glyph_generator(font, add_front_back, add_front_back=is_front_back)
+    font.close(save=True)

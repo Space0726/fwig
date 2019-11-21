@@ -8,7 +8,8 @@ Last modified date: 2019/09/26
 Created by Seongju Woo.
 """
 from functools import wraps
-from mojo.roboFont import RFont, CurrentFont
+# from mojo.roboFont import RFont, CurrentFont
+from fontParts.world import RFont, CurrentFont
 
 def iter_with_func(iter_func):
     """ Decorator for iterating over font objects with functions.
@@ -29,7 +30,7 @@ def iter_with_func(iter_func):
 
         @iter_with_func
         def generate_glyph(font, *functions, **conditions):
-            return (font.getGlyph(order) for order in font.glyphOrder)
+            return (font.getGlyph(key) for key in font.keys())
 
         generate_glyph(CurrentFont(), print_glyph, print_glyph=print_condition)
     """
@@ -69,8 +70,8 @@ def point_generator(font, *functions, **conditions):
 
         point_generator(CurrentFont(), print_func, print_func=print_condition)
     """
-    return (point for order in font.glyphOrder \
-                  for contour in font.getGlyph(order) \
+    return (point for key in font.keys() \
+                  for contour in font.getGlyph(key) \
                   for point in contour.points)
 
 @iter_with_func
@@ -96,8 +97,8 @@ def contour_generator(font, *functions, **conditions):
 
         contour_generator(CurrentFont(), print_func, print_func=print_condition)
     """
-    return (contour for order in font.glyphOrder \
-                    for contour in font.getGlyph(order))
+    return (contour for key in font.keys() \
+                    for contour in font.getGlyph(key))
 
 @iter_with_func
 def glyph_generator(font, *functions, **conditions):
@@ -122,4 +123,4 @@ def glyph_generator(font, *functions, **conditions):
 
         glyph_generator(CurrentFont(), print_func, print_func=print_condition)
     """
-    return (font.getGlyph(order) for order in font.glyphOrder)
+    return (font.getGlyph(key) for key in font.keys())
