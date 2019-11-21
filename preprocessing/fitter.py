@@ -104,6 +104,7 @@ def _append_points(original, intersect_points):
                             apt.append_point_coordinate_line(original, curve_points, locate[0][0], False)
                             break
                 elif curve.degree == 3:
+                    if curve.nodes[0][0] == curve.nodes[0][1] == curve.nodes[0][-2] == curve.nodes[0][-1]:
                         linear_curve = bt.make_linear_curve(
                                 (locate[0][0]-2, locate[1][0]),
                                 (locate[0][0]+2, locate[1][0]))
