@@ -73,7 +73,7 @@ def _seg2curve(points, start_idx, end_idx):
     for idx in range(start_idx+1, end_idx+1):
         if idx >= points_len:
             idx %= points_len
-        if points[i].type == 'curve':
+        if points[idx].type == 'curve':
             curve_dict[idx] = bt.RCurve([points[idx+i] for i in range(-3, 1)], degree=3)
         elif points[idx].type == 'line':
             curve_dict[idx] = bt.RCurve([points[idx+i] for i in range(-1, 1)], degree=1)
@@ -137,45 +137,38 @@ def _find_point(contour, position):
             return point.index
     return None
 
-def _fit_bcps(original, piece):
-    # print(piece.clockwise)
-    # print(original.naked().clockwise)
-    # piece.clockwise = False
-    # piece.clockwise = original.naked().clockwise
-    for idx, point in enumerate(piece.points):
-        if piece.points[idx].type != 'offcurve' and piece.points[idx-1].type == 'offcurve':
-            if piece.points[idx].smooth:
-                piece.points[idx].smooth = False
-            prev_point = piece.points[idx-3]
-            original_idx = _find_point(original, point.position)
+def _fit_bcps(standard, target, fit_target=True):
+    # print(target.clockwise)
+    # print(standard.naked().clockwise)
+    # target.clockwise = False
+    # target.clockwise = standard.naked().clockwise
+    for idx, point in enumerate(target.points):
+        if target.points[idx].type != 'offcurve' and target.points[idx-1].type == 'offcurve':
+            if target.points[idx].smooth:
+                target.points[idx].smooth = False
+            prev_point = target.points[idx-3]
+            original_idx = _find_point(standard, point.position)
             if original_idx is not None:
-                piece.points[idx-1].position = original.points[original_idx-1].position
-                piece.points[idx-2].position = original.points[original_idx-2].position
-    piece.setChanged()
+                if swap:
+                    target.points[idx-1].position = standard.points[original_idx-1].position
+                    target.points[idx-2].position = standard.points[original_idx-2].position
+                else:
+                    standard.points[idx-1].position = target.points[original_idx-1].position
+                    standard.points[idx-2].position = target.points[original_idx-2].position
+    target.setChanged()
 
-def fit_piece(original, piece):
+def fit_contour(original, piece, fit_piece=True):
     """ Fit piece to curve.
 
     Examples:
         original = CurrentGlyph().contours[2]
         piece = CurrentGlyph().contours[3]
-        fit_curve(original, piece)
+        fit_contour(original, piece)
     """
     penpair_lines = _get_penpair_lines(piece)
     intersect_points = _get_intersect_points(original, penpair_lines)
     _append_points(original, intersect_points)
-    _fit_bcps(original, piece)
-
-def fit_original(original, piece):
-    """ Fit piece to curve.
-
-    Examples:
-        original = CurrentGlyph().contours[2]
-        piece = CurrentGlyph().contours[3]
-        fit_curve(original, piece)
-    """
-    penpair_lines = _get_penpair_lines(piece)
-    intersect_points = _get_intersect_points(original, penpair_lines)
-    _append_points(original, intersect_points)
-    # TODO: fit original
-    _fit_bcps(original, piece)
+    if fit_piece:
+        _fit_bcps(original, piece)
+    else:
+        _fit_bcps(original, piece, False)
