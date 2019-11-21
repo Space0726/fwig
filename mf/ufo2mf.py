@@ -3,6 +3,7 @@ from xml.dom import minidom
 import sys
 import math
 from fontParts.world import *
+from fontParts.base import BaseGlyph
 from stemfont.tools.attributetools import *
 
 def _is_glif(file_name):
@@ -59,6 +60,7 @@ class Point:
         self.char = ""
         self.double = ""
         self.formType = ""
+        self.stroke = ""
         self.customer = ""
 
 def _get_value_by_node(tag, attribute):
@@ -304,6 +306,11 @@ def glyph2mf(glyphName, dirUFO, dirRadical, dirCombination, fontWidth, rfont):
                     notting = 0
 
                 try:
+                    points[idx].stroke = rpointsattr[i]['stroke']
+                except:
+                    notting = 0
+
+                try:
                     # points[idx].customer = node[i].attributes['customer'].value
                     points[idx].customer = rpointsattr[i]['customer']
                 except:
@@ -388,6 +395,8 @@ def glyph2mf(glyphName, dirUFO, dirRadical, dirCombination, fontWidth, rfont):
         penform = 'pen{HW}_{num}{opt} := (((pen{HWR}Rate - 1) * {diff:0.3f}) / 2) * {HW};\n'
         for pair in pairdict.keys():
             penpair = pairdict[pair]
+            lattr = Attribute(penpair['l'])
+            rattr = Attribute(penpair['r'])
 
             if len(penpair) != 2:
                 continue
@@ -424,6 +433,91 @@ def glyph2mf(glyphName, dirUFO, dirRadical, dirCombination, fontWidth, rfont):
                 fp.write(penform.format(HW='Width', num=pair, HWR='Width', diff=penWidth[int(pair)], opt=''))
                 fp.write(penform.format(HW='Height', num=pair, HWR='Height', diff=penHeight[int(pair)], opt=''))
 
+            if lattr.get_attr('stroke') is not None and rattr.get_attr('stroke') is not None:
+                edgepoint = penpair['l'] if penpair['l'].index < penpair['r'].index else penpair['r']
+                prepoint = edgepoint.contour.points[edgepoint.index - 1]
+                vector = (edgepoint.x - prepoint.x, edgepoint.y - prepoint.y)
+                diffw = penHeight[int(pair)]
+                diffh = penWidth[int(pair)]
+
+                if vector[0] < 0:
+                    diffw = diffw if diffw < 0 else -diffw
+                else:
+                    diffw = -diffw if diffw < 0 else diffw
+                if vector[1] < 0:
+                    diffh = diffh if diffh < 0 else -diffh
+                else:
+                    diffh = -diffh if diffh < 0 else diffh
+
+                fp.write(penform.format(HW='Width', num=pair, HWR='Width', diff=diffw, opt='_e'))
+                fp.write(penform.format(HW='Height', num=pair, HWR='Height', diff=diffh, opt='_e'))
+
+        ##############################################################################
+        # change moveSize
+
+        moveform = 'moveSizeOf{hv}{opt} := moveSizeOf{hv}{penpart}{unfill};\n'
+        penpartform = ' - ({pen}) / {hw}'
+        unfillform = ' / (pen{hw}Rate - 1) * (pen{hw}Rate / unfillRate - 1)'
+        ifmoveform = 'if isUnfill:\n{moveunfill}\nelse:\n{move}\nfi'
+        gbounds = rglyph.bounds
+        upformtype = ['3', '4', '5', '6']
+        downformtype = ['2', '4', '6']
+        standardpoints = {}
+
+        if firstattr.get_attr('sound') == 'first' and firstattr.get_attr('formType') in upformtype:
+            standardpoints['h'] = [findpoint(rglyph, (None, gbounds[1]))]
+            standardpoints['w'] = []
+        elif firstattr.get_attr('sound') == 'final' and firstattr.get_attr('formType') in downformtype:
+            if firstattr.get_attr('double') is None:
+                standardpoints['h'] = [findpoint(rglyph, (None, gbounds[3]))]
+                standardpoints['w'] = []
+            else:
+                leftcontours = [rcontour for rcontour in rglyph if get_attr(rcontour.points[0], 'double') == 'left']
+                rightcontours = [rcontour for rcontour in rglyph if get_attr(rcontour.points[0], 'double') == 'right']
+
+                lgbounds = getbounds(leftcontours)
+                rgbounds = getbounds(rightcontours)
+
+                standardpoints['h'] = [findpoint(leftcontours, (None, lgbounds[3])), findpoint(rightcontours, (None, rgbounds[3]))]
+                standardpoints['w'] = [findpoint(leftcontours, (lgbounds[2], None)), findpoint(rightcontours, (rgbounds[0], None))]
+        else:
+            standardpoints['h'] = []
+            standardpoints['w'] = []
+
+        moves = ''
+        moveunfills = ''
+
+        for key in standardpoints.keys():
+            hw = 'Height' if key == 'h' else 'Width'
+            hv = 'V' if key == 'h' else 'H'
+            penparts = []
+            for point in standardpoints.get(key):
+                attr = Attribute(point)
+                name = attr.get_attr('penPair')
+                if name[-1] == 'l':
+                    pen = '- pen' + hw + '_' + name[1: -1]
+                else:
+                    pen = 'pen' + hw + '_' + name[1: -1]
+                if attr.get_attr('stroke') is not None:
+                    pen += ' + pen' + hw + '_' + name[1: -1] + '_e'
+
+                penparts.append(penpartform.format(pen=pen, hw=hw))
+
+            unfill = unfillform.format(hw=hw)
+            if len(penparts) == 0:
+                moves += '\t' + moveform.format(hv=hv, opt='_', penpart='', unfill='')
+                moveunfills += '\t' + moveform.format(hv=hv, opt='_', penpart='', unfill='')
+            elif len(penparts) == 1:
+                moves += '\t' + moveform.format(hv=hv, opt='_', penpart=penparts[0], unfill='')
+                moveunfills += '\t' + moveform.format(hv=hv, opt='_', penpart=penparts[0], unfill=unfill)
+            else:
+                opt = ['_l', '_r']
+                for i in range(2):
+                    moves += '\t' + moveform.format(hv=hv, opt=opt[i], penpart=penparts[i], unfill='')
+                    moveunfills += '\t' + moveform.format(hv=hv, opt=opt[i], penpart=penparts[i], unfill=unfill)
+
+        fp.write(ifmoveform.format(moveunfill=moveunfills, move=moves))
+
         ##############################################################################
         # L, R points
         fp.write("\n% point coordinates \n")
@@ -441,12 +535,17 @@ def glyph2mf(glyphName, dirUFO, dirRadical, dirCombination, fontWidth, rfont):
             else:
                 op = "-"
 
+            if points[idx].double != '':
+                double = points[idx].double[0]
+            else:
+                double = ''
+
             fp.write("x" + name + " := (" + _float2str(float(points[idx].x)))
 
             if points[idx].customer != "":
                 fp.write(" + " + points[idx].customer)
 
-            fp.write(" + " + "moveSizeOfH) * " + "Width ")
+            fp.write(" + " + "moveSizeOfH_" + double + ") * " + "Width ")
             if points[idx].dependX != "":
                 dependXValue = points[idx].dependX
                 if dependXValue.find("l") != -1:
@@ -455,10 +554,12 @@ def glyph2mf(glyphName, dirUFO, dirRadical, dirCombination, fontWidth, rfont):
                     fp.write("- penWidth_" + dependXValue[1:-1])
             elif penWidth[int(name[0:-1])] != -1:
                 fp.write(op + " penWidth_" + name[0:-1])
+            if points[idx].stroke != '':
+                fp.write(' + penWidth_' + name[: -1] + '_e')
             fp.write(";\n")
 
             fp.write(
-                "y" + name + " := (" + _float2str(float(points[idx].y)) + " + " + "moveSizeOfV) * " + "Height ")
+                "y" + name + " := (" + _float2str(float(points[idx].y)) + " + " + "moveSizeOfV_" + double + ") * " + "Height ")
             if points[idx].dependY != "":
                 dependYValue = points[idx].dependY
                 if dependYValue.find("l") != -1:
@@ -467,6 +568,8 @@ def glyph2mf(glyphName, dirUFO, dirRadical, dirCombination, fontWidth, rfont):
                     fp.write("- penHeight_" + dependYValue[1:-1])
             elif penHeight[int(name[0:-1])] != -1:
                 fp.write(op + " penHeight_" + name[0:-1])
+            if points[idx].stroke != '':
+                fp.write(' + penHeight_' + name[: -1] + '_e')
             fp.write(";\n")
 
         pointform = '{xy}{pair}{opt1}{opt2}{lr} := ({coord:0.3f} + moveSizeOf{hv}) * {hw} {op} pen{hw}_{pair}{opt1};\n'
@@ -1305,6 +1408,35 @@ def getpairdict(rcontours):
             pairdict[penpair[1: -1]][penpair[-1]] = point
 
     return pairdict
+
+def findpoint(rcontours, coord):
+    point = None
+    x = coord[0]
+    y = coord[1]
+
+    for rcontour in rcontours:
+        for rpoint in rcontour.points:
+            if rpoint.type == 'offcurve':
+                continue
+            if x is not None and y is not None:
+                if rpoint.x == x and rpoint.y == y:
+                    point = rpoint
+            elif x is not None:
+                if rpoint.x == x:
+                    point = rpoint
+            elif y is not None:
+                if rpoint.y == y:
+                    point = rpoint
+
+    return point
+
+def getbounds(rcontours):
+    newglyph = rcontours[0].glyph.copy()
+    newglyph.clearContours()
+    for rcontour in rcontours:
+        newglyph.appendContour(rcontour)
+
+    return newglyph.bounds
 
 if __name__ == '__main__':
     ufo2mf('../../..', 'YullyeoM.ufo')
