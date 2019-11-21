@@ -138,24 +138,27 @@ def _find_point(contour, position):
     return None
 
 def _fit_bcps(standard, target, fit_target=True):
-    # print(target.clockwise)
-    # print(standard.naked().clockwise)
-    # target.clockwise = False
-    # target.clockwise = standard.naked().clockwise
+    if standard.clockwise != target.clockwise:
+        if fit_target:
+            target.cockwise = standard.clockwise
+        else:
+            standard.cockwise = target.clockwise
     for idx, point in enumerate(target.points):
         if target.points[idx].type != 'offcurve' and target.points[idx-1].type == 'offcurve':
-            if target.points[idx].smooth:
-                target.points[idx].smooth = False
-            prev_point = target.points[idx-3]
             original_idx = _find_point(standard, point.position)
             if original_idx is not None:
-                if swap:
+                if fit_target:
+                    if target.points[idx].smooth:
+                        target.points[idx].smooth = False
                     target.points[idx-1].position = standard.points[original_idx-1].position
                     target.points[idx-2].position = standard.points[original_idx-2].position
+                    target.setChanged()
                 else:
+                    if standard.points[idx].smooth:
+                        standard.points[idx].smooth = False
                     standard.points[idx-1].position = target.points[original_idx-1].position
                     standard.points[idx-2].position = target.points[original_idx-2].position
-    target.setChanged()
+                    standard.setChanged()
 
 def fit_contour(original, piece, fit_piece=True):
     """ Fit piece to curve.
