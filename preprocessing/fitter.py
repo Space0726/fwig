@@ -138,7 +138,7 @@ def _find_point(contour, position):
     return None
 
 def _fit_bcps(standard, target, fit_target=True):
-    if standard.clockwise != target.clockwise:
+    if standard.naked().clockwise != target.naked().clockwise:
         if fit_target:
             target.cockwise = standard.clockwise
         else:
