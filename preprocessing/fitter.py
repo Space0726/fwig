@@ -163,6 +163,11 @@ def _fit_bcps(standard, target, fit_target=True):
 def fit_contour(original, piece, fit_piece=True):
     """ Fit piece to curve.
 
+    Args:
+        original:: RContour
+        piece:: RContour
+        fit_piece:: bool
+
     Examples:
         original = CurrentGlyph().contours[2]
         piece = CurrentGlyph().contours[3]
