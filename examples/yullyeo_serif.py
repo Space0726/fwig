@@ -35,7 +35,7 @@ def get_serif_contour(glyph):
             serif_contours.append(contour)
     return serif_contours
 
-def add_serif(glyph):
+def add_serif_attr(glyph):
     serif_attr = 'serif'
     serif_contour = get_serif_contour(glyph)
     if serif_contour:
@@ -49,4 +49,4 @@ def add_serif(glyph):
                 break
 
 if __name__ == '__main__':
-    iterfont.glyph_generator(CurrentFont(), add_serif, add_serif=is_serif_contour)
+    iterfont.glyph_generator(CurrentFont(), add_serif_attr, add_serif_attr=is_serif_contour)

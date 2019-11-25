@@ -24,4 +24,4 @@ if __name__ == "__main__":
     for o in font.glyphOrder:
         glyph = font.getGlyph(o)
         if glyph.name.find('uni') == -1:
-            YullyeoSound(glyph).add_sound_attribute()
+            YullyeoSound(glyph).add_sound_attr()
