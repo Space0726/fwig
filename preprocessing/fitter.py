@@ -155,13 +155,13 @@ def _fit_bcps(standard, target, fit_target=True):
                         target.points[idx].smooth = False
                     target.points[idx-1].position = standard.points[original_idx-1].position
                     target.points[idx-2].position = standard.points[original_idx-2].position
-                    target.changed()
+                    target.setChanged()
                 else:
                     if standard.points[original_idx].smooth:
                         standard.points[original_idx].smooth = False
                     standard.points[original_idx-1].position = target.points[idx-1].position
                     standard.points[original_idx-2].position = target.points[idx-2].position
-                    standard.changed()
+                    standard.setChanged()
 
 def fit_contour(original, piece, fit_piece=True):
     """ Fit piece to curve.
