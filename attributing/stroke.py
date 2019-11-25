@@ -1,6 +1,4 @@
-from stemfont.tools import attributetools as at
-from stemfont.tools import iterfont
-from fontParts.world import OpenFont
+from stemfont.tools import attributetools as at, iterfont
 
 def _get_penpair_dict(contour):
     penpair_dict = {}
@@ -14,8 +12,8 @@ def _get_penpair_dict(contour):
             penpair_dict[penpair] = [point]
     return penpair_dict
 
-def _get_begin_end(contours):
-    begin_end_dict = {}
+def _get_stroke_dict(contours):
+    stroke_dict = {}
     criteria_1 = lambda p: at.get_attr(p, 'dependX') is None and \
                            at.get_attr(p, 'dependY') is None
     criteria_2 = lambda p: any([contour.pointInside(p.position) for contour in contours
@@ -30,20 +28,42 @@ def _get_begin_end(contours):
     if len(candidates) == 2:
         cand_1, cand_2 = candidates
         if (cand_1[0].y + cand_1[1].y) / 2 > (cand_2[0].y + cand_2[1].y) / 2:
-            begin_end_dict['front'] = cand_1
-            begin_end_dict['back'] = cand_2
+            stroke_dict['begin'] = cand_1
+            stroke_dict['end'] = cand_2
         else:
-            begin_end_dict['front'] = cand_2
-            begin_end_dict['back'] = cand_1
-    return begin_end_dict
+            stroke_dict['begin'] = cand_2
+            stroke_dict['end'] = cand_1
+    return stroke_dict
+
+def _classify_contours(glyph):
+    classified_dict = {}
+    for contour in glyph.contours:
+        double = at.get_attr(contour.points[0], 'double')
+        if double is not None:
+            try:
+                classified_dict[double].append(contour)
+            except KeyError:
+                classified_dict[double] = [contour]
+    return tuple(classified_dict.values())
 
 def add_stroke_attr(glyph):
-    begin_end = _get_begin_end(glyph.contours)
-    if begin_end:
-        for point in begin_end['front']:
-            at.add_attr(point, 'stroke', 'begin')
-        for point in begin_end['back']:
-            at.add_attr(point, 'stroke', 'end')
+    attr = at.name2dict(glyph.contours[0].points[0].name)
+    if attr.get('double') is not None:
+        char = attr.get('char')
+        if (attr.get('first') and (char == 1 or char == 4)) or \
+                (attr.get('final') and char in (2, 3, 5, 6, *range(9, 16), 18)):
+            contour_set = _classify_contours(glyph)
+            contour_set = [_get_stroke_dict(contours) for contours in contour_set]
+        else:
+            contour_set = [_get_stroke_dict(glyph.contours)]
+    else:
+        contour_set = [_get_stroke_dict(glyph.contours)]
+    for stroke_dict in contour_set:
+        if stroke_dict:
+            for point in stroke_dict['begin']:
+                at.add_attr(point, 'stroke', 'begin')
+            for point in stroke_dict['end']:
+                at.add_attr(point, 'stroke', 'end')
 
 def need_stroke(glyph):
     if glyph.name.startswith('uni'):
