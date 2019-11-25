@@ -6,7 +6,9 @@ def point2nodes(points):
                               [float(point.y) for point in points]])
 
 def make_linear_curve(coord_1, coord_2):
-    return RCurve([coord_1, coord_2], degree=1)
+    nodes = np.asfortranarray([[float(coord_1[0]), float(coord_2[0])],
+                               [float(coord_1[1]), float(coord_2[1])]])
+    return bezier.Curve(nodes, degree=1)
 
 # TODO: slope apply
 def make_linear_segment(coord, range_, slope):
