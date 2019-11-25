@@ -22,6 +22,7 @@ def _get_stroke_dict(contours):
     for contour in contours:
         penpair_dict = _get_penpair_dict(contour)
         for penpair, points in penpair_dict.items():
+            # TODO: Modify criteria - cri1 or cri2 => pass
             if len(points) == 2 and abs(points[0].index - points[1].index) == 1 and \
                     all(map(criteria_1, points)) and not any(map(criteria_2, points)):
                 candidates.append(points)
@@ -47,15 +48,17 @@ def _classify_contours(glyph):
     return tuple(classified_dict.values())
 
 def add_stroke_attr(glyph):
-    attr = at.name2dict(glyph.contours[0].points[0].name)
-    if attr.get('double') is not None:
-        char = attr.get('char')
-        if (attr.get('first') and (char == 1 or char == 4)) or \
-                (attr.get('final') and char in (2, 3, 5, 6, *range(9, 16), 18)):
-            contour_set = _classify_contours(glyph)
-            contour_set = [_get_stroke_dict(contours) for contours in contour_set]
-        else:
-            contour_set = [_get_stroke_dict(glyph.contours)]
+    repr_point = at.name2dict(glyph.contours[0].points[0].name)
+    if repr_point.get('double') is not None:
+        for contour in glyph.contours:
+            attr = at.name2dict(contour.points[0].name)
+            char = int(attr.get('char'))
+            if (attr.get('sound') == 'first' and (char == 1 or char == 4)) or \
+                    (attr.get('sound') == 'final' and char in (2, 3, 5, 6, *range(9, 16), 18)):
+                contour_set = _classify_contours(glyph)
+                contour_set = [_get_stroke_dict(contours) for contours in contour_set]
+            else:
+                contour_set = [_get_stroke_dict(glyph.contours)]
     else:
         contour_set = [_get_stroke_dict(glyph.contours)]
     for stroke_dict in contour_set:
@@ -72,4 +75,5 @@ def need_stroke(glyph):
         return True
 
 if __name__ == '__main__':
-    iterfont.glyph_generator(CurrentFont(), add_stroke_attr, add_stroke_attr=need_stroke)
+    # iterfont.glyph_generator(CurrentFont(), add_stroke_attr, add_stroke_attr=need_stroke)
+    add_stroke_attr(CurrentGlyph())
