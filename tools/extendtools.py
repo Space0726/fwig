@@ -6,7 +6,6 @@ Created by Seongju Woo.
 """
 import numpy as np
 import bezier
-from mojo.roboFont import RPoint
 
 class _InputError(Exception):
     def __init__(self, expression, message):
