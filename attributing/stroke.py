@@ -1,4 +1,4 @@
-from stemfont.tools import attributetools as at, iterfont
+from stemfont.tools import attributetools as at
 
 class _PairError(Exception):
     def __init__(self, e):
@@ -82,9 +82,3 @@ def add_stroke_attr(glyph):
             for stroke, points in stroke_dict.items():
                 for point in points:
                     at.add_attr(point, 'stroke', stroke)
-
-def need_stroke(glyph):
-    return not glyph.name.startswith('uni')
-
-if __name__ == '__main__':
-    iterfont.glyph_generator(CurrentFont(), add_stroke_attr, add_stroke_attr=need_stroke)

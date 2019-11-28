@@ -1,5 +1,6 @@
 from stemfont.unicode import Uni2Kor
 from stemfont.tools import attributetools as at, iterfont
+from fontParts.world import CurrentFont
 
 class YullyeoTagger(Uni2Kor):
     def __init__(self, glyph):
