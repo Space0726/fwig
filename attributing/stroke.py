@@ -1,5 +1,9 @@
 from stemfont.tools import attributetools as at, iterfont
 
+class _PairError(Exception):
+    def __init__(self, e):
+        super().__init__(e)
+
 def _get_penpair_dict(contour):
     penpair_dict = {}
     for point in contour.points:
@@ -10,6 +14,8 @@ def _get_penpair_dict(contour):
             penpair_dict[penpair].append(point)
         else:
             penpair_dict[penpair] = [point]
+    if not all(map(lambda x: len(x) == 2, penpair_dict.values())):
+        raise _PairError('Pair is not exist.')
     return penpair_dict
 
 def _get_stroke_dict(contours):
@@ -20,7 +26,10 @@ def _get_stroke_dict(contours):
                                                                 if not contour is p.contour])
     candidates = []
     for contour in contours:
-        penpair_dict = _get_penpair_dict(contour)
+        try:
+            penpair_dict = _get_penpair_dict(contour)
+        except _PairError:
+            continue
         stroke_parts = []
         for penpair, points in penpair_dict.items():
             idx_diff = abs(points[0].index - points[1].index)
@@ -60,7 +69,6 @@ def add_stroke_attr(glyph):
             attr = at.name2dict(contour.points[0].name)
             char = int(attr.get('char'))
             sound = attr.get('sound')
-            # TODO: ㅇ, ㅎ 예외처리하기
             if (sound == 'first' and (char == 1 or char == 4)) or \
                     (sound == 'final' and char in (2, 3, 5, 6, *range(9, 16), 18)):
                 contour_set = _classify_contours(glyph)
@@ -76,11 +84,7 @@ def add_stroke_attr(glyph):
                     at.add_attr(point, 'stroke', stroke)
 
 def need_stroke(glyph):
-    if glyph.name.startswith('uni'):
-        return False
-    else:
-        return True
+    return not glyph.name.startswith('uni')
 
 if __name__ == '__main__':
-    # iterfont.glyph_generator(CurrentFont(), add_stroke_attr, add_stroke_attr=need_stroke)
-    add_stroke_attr(CurrentGlyph())
+    iterfont.glyph_generator(CurrentFont(), add_stroke_attr, add_stroke_attr=need_stroke)
