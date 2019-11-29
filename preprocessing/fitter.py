@@ -1,12 +1,10 @@
 import bezier
 import numpy as np
-from stemfont.tools import attributetools as at
-from stemfont.tools import appendtools as apt
-from stemfont.tools import extendtools as et
-from stemfont.tools import beziertools as bt
+from stemfont.tools import attributetools as at, appendtools as apt, \
+                           extendtools as et, beziertools as bt
 
 def _distance(point_1, point_2):
-    return (point_1[0] - point_2[0])**2 + (point_2[1] - point_2[1])**2
+    return (point_1[0] - point_2[0])**2 + (point_1[1] - point_2[1])**2
 
 def _get_all_points(contour):
     return set([point for point in contour.points if point.type != 'offcurve'])
@@ -123,22 +121,25 @@ def _append_points(original, intersect_points):
                             apt.append_point_coordinate(original, curve_points, locate[0][0], False)
                             break
 
-def _remove_points(original, remain_list=None):
-    remove_list = []
-    for point in original.points:
-        if point not in remain_list:
-            remove_list.append(point)
+def _find_remove_list(original, piece, penpair_lines) -> list:
+    1
+
+def _remove_points(original, remove_list):
     for point in remove_list:
         original.removePoint(point, True)
 
-def _find_point(contour, position):
+def _find_point(contour, position, strict=False):
     for point in contour.points:
-        if point.position == position:
-            return point.index
+        if strict:
+            if _distance(point.position, position) < 9:
+                return point.index
+        else:
+            if point.position == position:
+                return point.index
     return None
 
 def _fit_bcps(standard, target, fit_target=True):
-    if standard.clockwise != target.clockwise:
+    if standard.naked().clockwise != target.naked().clockwise:
         if fit_target:
             target.cockwise = standard.clockwise
         else:
@@ -154,14 +155,19 @@ def _fit_bcps(standard, target, fit_target=True):
                     target.points[idx-2].position = standard.points[original_idx-2].position
                     target.setChanged()
                 else:
-                    if standard.points[idx].smooth:
-                        standard.points[idx].smooth = False
-                    standard.points[idx-1].position = target.points[original_idx-1].position
-                    standard.points[idx-2].position = target.points[original_idx-2].position
+                    if standard.points[original_idx].smooth:
+                        standard.points[original_idx].smooth = False
+                    standard.points[original_idx-1].position = target.points[idx-1].position
+                    standard.points[original_idx-2].position = target.points[idx-2].position
                     standard.setChanged()
 
 def fit_contour(original, piece, fit_piece=True):
     """ Fit piece to curve.
+
+    Args:
+        original:: RContour
+        piece:: RContour
+        fit_piece:: bool
 
     Examples:
         original = CurrentGlyph().contours[2]
@@ -171,7 +177,6 @@ def fit_contour(original, piece, fit_piece=True):
     penpair_lines = _get_penpair_lines(piece)
     intersect_points = _get_intersect_points(original, penpair_lines)
     _append_points(original, intersect_points)
-    if fit_piece:
-        _fit_bcps(original, piece)
-    else:
-        _fit_bcps(original, piece, False)
+    remove_list = _find_remove_list(original, piece, penpair_lines)
+    _remove_points(original, remove_list)
+    _fit_bcps(original, piece, fit_piece)

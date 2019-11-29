@@ -1,5 +1,5 @@
-from stemfont.tools import attributetools as at
-from stemfont.tools import iterfont
+from stemfont.tools import attributetools as at, iterfont
+from fontParts.world import CurrentFont
 
 def _is_inside_point(point, glyph, self_check=False, position=None):
     if position is None:

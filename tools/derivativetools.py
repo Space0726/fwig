@@ -7,7 +7,6 @@ Created by Seongju Woo.
 import math
 import numpy as np
 import bezier
-from mojo.roboFont import RContour, RPoint
 from stemfont.tools import appendtools
 
 def _calculate_distance(point_1, point_2):

@@ -4,7 +4,6 @@ Last modified date: 2019/08/28
 
 Created by Seongju Woo.
 """
-from fontParts.fontshell import RContour
 from stemfont.tools import extendtools as et
 
 class Triangle:

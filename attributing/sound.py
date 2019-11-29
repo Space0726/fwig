@@ -5,7 +5,6 @@ Last modified data: 2019/09/11
 Created by Seongju Woo.
 """
 import abc
-from fontParts.fontshell import RGlyph
 from stemfont.tools import attributetools as at
 
 class Sound:
@@ -43,23 +42,23 @@ class Sound:
         """
         pass
 
-    def add_sound_attribute(self, add_sound=True):
+    def add_sound_attr(self, add_sound=True):
         """ Adds sound attribute at first point of the glyph.
 
         Args:
             add_sound:: bool
 
         Returns:
-            name_attribute:: str
+            name_attr:: str
         """
-        name_attribute = "'sound':"
+        name_attr = "'sound':"
         glyph_sound = self.calculate_sound()
         if glyph_sound not in (-1, 0, 1, 2):
             raise ValueError("calculate_sound() must return one of 0, 1, 2, or -1.")
         elif glyph_sound == -1:
             return None
         else:
-            name_attribute += Sound._SOUNDS[glyph_sound]
+            name_attr += Sound._SOUNDS[glyph_sound]
 
         if add_sound:
             for contour in self.glyph.contours:
@@ -70,8 +69,8 @@ class Sound:
                             attribute.get_attr('sound') != Sound._SOUNDS[glyph_sound]:
                         attribute.set_attr('sound', Sound._SOUNDS[glyph_sound][1:-1])
                     else:
-                        target_point.name += ',' + name_attribute
+                        target_point.name += ',' + name_attr
                 else:
-                    target_point.name = name_attribute
+                    target_point.name = name_attr
 
-        return name_attribute
+        return name_attr

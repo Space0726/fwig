@@ -36,7 +36,7 @@ def _calculate_inclination(point_1, point_2):
     except ZeroDivisionError:
         return float('inf')
 
-def add_depend_attribute(glyph):
+def add_depend_attr(glyph):
     if glyph.name.find('V') != -1 or not glyph.hasOverlap():
         return None
     penpair_dict = at.get_penpair_dict(glyph)
