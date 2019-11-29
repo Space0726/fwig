@@ -494,10 +494,22 @@ def glyph2mf(glyphName, dirUFO, dirRadical, dirCombination, fontWidth, rfont):
             for point in standardpoints.get(key):
                 attr = Attribute(point)
                 name = attr.get_attr('penPair')
-                if name[-1] == 'l':
-                    pen = '- pen' + hw + '_' + name[1: -1]
+
+                if hw == 'Height':
+                    depend = attr.get_attr('dependY')
                 else:
-                    pen = 'pen' + hw + '_' + name[1: -1]
+                    depend = attr.get_attr('dependX')
+
+                if depend is not None:
+                    if depend[-1] == 'l':
+                        pen = 'pen' + hw + '_' + depend[1: -1]
+                    else:
+                        pen = '- pen' + hw + '_' + depend[1: -1]
+                else:
+                    if name[-1] == 'l':
+                        pen = 'pen' + hw + '_' + name[1: -1]
+                    else:
+                        pen = '- pen' + hw + '_' + name[1: -1]
                 if attr.get_attr('stroke') is not None:
                     pen += ' + pen' + hw + '_' + name[1: -1] + '_e'
 
@@ -524,6 +536,10 @@ def glyph2mf(glyphName, dirUFO, dirRadical, dirCombination, fontWidth, rfont):
         for i in range(len(pointOrder)):
             idx = pointOrder[i]
             name = points[idx].name[1:]
+            curpoint = points[idx]
+
+            if curpoint.startP != '':
+                startpoint = curpoint
 
             if len(siotorder) > 0 and name[: -1] in siotorder[1: -1]:
                 continue
@@ -535,8 +551,8 @@ def glyph2mf(glyphName, dirUFO, dirRadical, dirCombination, fontWidth, rfont):
             else:
                 op = "-"
 
-            if points[idx].double != '':
-                double = points[idx].double[0]
+            if startpoint.double != '':
+                double = startpoint.double[0]
             else:
                 double = ''
 
