@@ -79,7 +79,7 @@ def append_point_by_derivative(contour_points, target_index, target_contour):
             RContour object which containing the opposite curve.
 
     Examples:
-        from mojo.roboFont import CurrentGlyph
+        from fontParts.world import CurrentGlyph
         glyph = CurrentGlyph()
 
         # RContour's list of RPoints which you want to derivative.
