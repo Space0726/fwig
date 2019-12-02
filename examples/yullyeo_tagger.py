@@ -72,7 +72,7 @@ class YullyeoTagger(Uni2Kor):
                 sound = attr.get_attr('sound')
                 center_x = _calc_center(point)[0]
                 if sound == 'final':
-                    if center_x < 290:
+                    if center_x < 311:
                         attr.add_attr('double', 'left')
                     else:
                         attr.add_attr('double', 'right')
