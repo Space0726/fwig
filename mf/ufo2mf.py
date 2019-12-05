@@ -392,7 +392,7 @@ def glyph2mf(glyphName, dirUFO, dirRadical, dirCombination, fontWidth, rfont):
         jiotpairdict = getpairdict(jiotcontours)
         jiotorder = sorted(jiotpairdict, key=lambda pair: jiotpairdict[pair]['l'].x if jiotpairdict[pair]['l'].y > jiotpairdict[pair]['r'].y else jiotpairdict[pair]['r'].x)
         pairdict = getpairdict(rglyph)
-        penform = 'pen{HW}_{num}{opt} := (((pen{HWR}Rate - 1) * {diff:0.3f}) / 2) * {HW};\n'
+        penform = 'pen{HW}_{num}{opt} := ((pen{HWR}Rate - 1) * {diff:0.3f}) / 2;\n'
         for pair in pairdict.keys():
             penpair = pairdict[pair]
             lattr = Attribute(penpair['l'])
@@ -556,12 +556,11 @@ def glyph2mf(glyphName, dirUFO, dirRadical, dirCombination, fontWidth, rfont):
             else:
                 double = ''
 
-            fp.write("x" + name + " := (" + _float2str(float(points[idx].x)))
+            fp.write("x" + name + " := " + _float2str(float(points[idx].x)))
 
             if points[idx].customer != "":
                 fp.write(" + " + points[idx].customer)
 
-            fp.write(" + " + "moveSizeOfH_" + double + ") * " + "Width ")
             if points[idx].dependX != "":
                 dependXValue = points[idx].dependX
                 if dependXValue.find("l") != -1:
@@ -574,8 +573,7 @@ def glyph2mf(glyphName, dirUFO, dirRadical, dirCombination, fontWidth, rfont):
                 fp.write(' + penWidth_' + name[: -1] + '_e')
             fp.write(";\n")
 
-            fp.write(
-                "y" + name + " := (" + _float2str(float(points[idx].y)) + " + " + "moveSizeOfV_" + double + ") * " + "Height ")
+            fp.write("y" + name + " := " + _float2str(float(points[idx].y)))
             if points[idx].dependY != "":
                 dependYValue = points[idx].dependY
                 if dependYValue.find("l") != -1:
@@ -588,7 +586,7 @@ def glyph2mf(glyphName, dirUFO, dirRadical, dirCombination, fontWidth, rfont):
                 fp.write(' + penHeight_' + name[: -1] + '_e')
             fp.write(";\n")
 
-        pointform = '{xy}{pair}{opt1}{opt2}{lr} := ({coord:0.3f} + moveSizeOf{hv}) * {hw} {op} pen{hw}_{pair}{opt1};\n'
+        pointform = '{xy}{pair}{opt1}{opt2}{lr} := {coord:0.3f} {op} pen{hw}_{pair}{opt1};\n'
         for pair in pairdict.keys():
             penpair = pairdict[pair]
 
@@ -606,10 +604,10 @@ def glyph2mf(glyphName, dirUFO, dirRadical, dirCombination, fontWidth, rfont):
                     else:
                         op = '-'
                     fp.write(
-                        pointform.format(xy='x', pair=pair, lr=lr, coord=penpair[lr].x, hv='H', hw='Width', op=op,
+                        pointform.format(xy='x', pair=pair, lr=lr, coord=penpair[lr].x, hw='Width', op=op,
                                          opt1='', opt2='_'))
                     fp.write(
-                        pointform.format(xy='y', pair=pair, lr=lr, coord=penpair[lr].y, hv='V', hw='Height', op=op,
+                        pointform.format(xy='y', pair=pair, lr=lr, coord=penpair[lr].y, hw='Height', op=op,
                                          opt1='', opt2='_'))
             else:
                 for lr in penpair.keys():
@@ -618,16 +616,16 @@ def glyph2mf(glyphName, dirUFO, dirRadical, dirCombination, fontWidth, rfont):
                     else:
                         op = '-'
                     fp.write(
-                        pointform.format(xy='x', pair=pair, lr=lr, coord=penpair[lr].x, hv='H', hw='Width', op=op,
+                        pointform.format(xy='x', pair=pair, lr=lr, coord=penpair[lr].x, hw='Width', op=op,
                                          opt1='_h', opt2=''))
                     fp.write(
-                        pointform.format(xy='y', pair=pair, lr=lr, coord=penpair[lr].y, hv='V', hw='Height', op=op,
+                        pointform.format(xy='y', pair=pair, lr=lr, coord=penpair[lr].y, hw='Height', op=op,
                                          opt1='_h', opt2=''))
                     fp.write(
-                        pointform.format(xy='x', pair=pair, lr=lr, coord=penpair[lr].x, hv='H', hw='Width', op=op,
+                        pointform.format(xy='x', pair=pair, lr=lr, coord=penpair[lr].x, hw='Width', op=op,
                                          opt1='_w', opt2=''))
                     fp.write(
-                        pointform.format(xy='y', pair=pair, lr=lr, coord=penpair[lr].y, hv='V', hw='Height', op=op,
+                        pointform.format(xy='y', pair=pair, lr=lr, coord=penpair[lr].y, hw='Height', op=op,
                                          opt1='_w', opt2=''))
 
         lineform = 'z{start} -- 2[z{start}, z{end}]'
@@ -938,8 +936,8 @@ def glyph2mf(glyphName, dirUFO, dirRadical, dirCombination, fontWidth, rfont):
             #       fp.write("y" + pointName + str(j+1) + " := y" + pointName + str(j+1) + " - (1 - curveRate) * (" + "y" + pointName + str(j+1) + " - y" + pointName + ");\n")
 
         if len(circlepoints) != 0:
-            raidusform = '(({anchor} {op} {anchorpen} - ({revname} {op} {revpen})) / 2)'
-            bcpform = '{bcpname}{num} := {anchor} * {coordrate} {op} {pen} / {raidus} * (1 - {coordrate}) * {anchor};\n'
+            radiusform = '(({anchor} {op} {anchorpen} - ({revname} {op} {revpen})) / 2)'
+            bcpform = '{bcpname}{num} := {anchor} * {coordrate} {op} {pen} / {radius} * (1 - {coordrate}) * {anchor};\n'
             for rcontour in rglyph:
                 if len(rcontour.points) != len(rcontour) * 3:
                     continue
@@ -971,31 +969,38 @@ def glyph2mf(glyphName, dirUFO, dirRadical, dirCombination, fontWidth, rfont):
                     penx = ['penHeight_%s' % (x[:-1]) for x in anchor]
                     peny = ['penWidth_%s' % (x[:-1]) for x in anchor]
 
-                    raidus = []
+                    radius = []
                     op = '-' if bcpname[-1] == 'l' else '+'
                     if prepoint.x in cboundx:
                         pen = 'penWidth_'
-                        raidus.append(raidusform.format(anchor='x' + anchor[0], anchorpen=pen + anchor[0][:-1],
+                        radius.append(radiusform.format(anchor='x' + anchor[0], anchorpen=pen + anchor[0][:-1],
                                                         revname='x' + revnames[0], revpen=pen + revnames[0][:-1], op=op))
                     elif prepoint.y in cboundy:
                         pen = 'penHeight_'
-                        raidus.append(raidusform.format(anchor='y' + anchor[0], anchorpen=pen + anchor[0][:-1],
+                        radius.append(radiusform.format(anchor='y' + anchor[0], anchorpen=pen + anchor[0][:-1],
                                                         revname='y' + revnames[0], revpen=pen + revnames[0][:-1], op=op))
                     if curpoint.x in cboundx:
                         pen = 'penWidth_'
-                        raidus.append(raidusform.format(anchor='x' + anchor[1], anchorpen=pen + anchor[1][:-1],
+                        radius.append(radiusform.format(anchor='x' + anchor[1], anchorpen=pen + anchor[1][:-1],
                                                         revname='x' + revnames[1], revpen=pen + revnames[1][:-1], op=op))
                     elif curpoint.y in cboundy:
                         pen = 'penHeight_'
-                        raidus.append(raidusform.format(anchor='y' + anchor[1], anchorpen=pen + anchor[1][:-1],
+                        radius.append(radiusform.format(anchor='y' + anchor[1], anchorpen=pen + anchor[1][:-1],
                                                         revname='y' + revnames[1], revpen=pen + revnames[1][:-1], op=op))
 
                     for num in range(2):
                         fp.write(bcpform.format(bcpname='x' + bcpname, num=num + 1, anchor='x' + anchor[num],
-                                                coordrate=coordratex[num], pen=penx[num], raidus=raidus[num], op=op))
+                                                coordrate=coordratex[num], pen=penx[num], radius=radius[num], op=op))
                         fp.write(bcpform.format(bcpname='y' + bcpname, num=num + 1, anchor='y' + anchor[num],
-                                                coordrate=coordratey[num], pen=peny[num], raidus=raidus[num], op=op))
+                                                coordrate=coordratey[num], pen=peny[num], radius=radius[num], op=op))
 
+        #####################################################################################
+        movesize_form = "{xy}{pair}{lr} := {xy}{pair}{lr} + moveSizeOf{hv};{end}"
+        fp.write('\n% Move points\n')
+        for pair, pair_points in pairdict.items():
+            for lr in pair_points.keys():
+                fp.write(movesize_form.format(xy='x', pair=pair, lr=lr, hv='H', end=' '))
+                fp.write(movesize_form.format(xy='y', pair=pair, lr=lr, hv='V', end='\n'))
         #####################################################################################
         # round point
         if existRound:
@@ -1114,6 +1119,32 @@ def glyph2mf(glyphName, dirUFO, dirRadical, dirCombination, fontWidth, rfont):
                         3] + ';\n')
 
             fp.write('fi\n')
+
+        #####################################################################################
+        wh_form = "{xy}{round_}{pair}{lr} := {xy}{pair}{lr} * {hw};{end}"
+        fp.write("\n% Resize glyph\n")
+        for pair, pair_points in pairdict.items():
+            for lr in pair_points.keys():
+                fp.write(wh_form.format(xy='x', round_='', pair=pair, lr=lr, hw='Width', end=' '))
+                fp.write(wh_form.format(xy='y', round_='', pair=pair, lr=lr, hw='Height', end='\n'))
+
+        # For round points
+        fp.write('\nif curveRate > 0.0:\n')
+        for rcontour in rglyph.contours:
+            for rpoint in rcontour.points:
+                if rpoint.type == 'offcurve':
+                    continue
+                attr_dict = at.name2dict(rpoint.name)
+                if attr_dict.get('round') is not None:
+                    penpair = attr_dict.get('penPair')
+                    pair = penpair[1:-1]
+                    lr = penpair[-1]
+                    for i in range(4):
+                        round_ = '_R' + str(i)
+                        fp.write('\t' + wh_form.format(
+                            xy='x', round_=round_, pair=pair, lr=lr, hw='Width', end=' '))
+                        fp.write(wh_form.format(
+                            xy='y', round_=round_, pair=pair, lr=lr, hw='Height', end='\n'))
 
         #####################################################################################
 
