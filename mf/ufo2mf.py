@@ -995,7 +995,7 @@ def glyph2mf(glyphName, dirUFO, dirRadical, dirCombination, fontWidth, rfont):
                                                 coordrate=coordratey[num], pen=peny[num], radius=radius[num], op=op))
 
         #####################################################################################
-        movesize_form = "{xy}{pair}{lr} := {xy}{pair}{lr} + moveSizeOf{hv};{end}"
+        movesize_form = "{xy}{pair}{lr} := {xy}{pair}{lr} + moveSizeOf{hv}_;{end}"
         fp.write('\n% Move points\n')
         for pair, pair_points in pairdict.items():
             for lr in pair_points.keys():
