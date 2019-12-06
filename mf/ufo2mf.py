@@ -452,83 +452,6 @@ def glyph2mf(glyphName, dirUFO, dirRadical, dirCombination, fontWidth, rfont):
                 fp.write(penform.format(HW='Width', num=pair, HWR='Width', diff=diffw, opt='_e'))
                 fp.write(penform.format(HW='Height', num=pair, HWR='Height', diff=diffh, opt='_e'))
 
-        ##############################################################################
-        # change moveSize
-
-        moveform = 'moveSizeOf{hv}{opt} := moveSizeOf{hv}{penpart}{unfill};\n'
-        penpartform = ' - ({pen}) / {hw}'
-        unfillform = ' / (pen{hw}Rate - 1) * (pen{hw}Rate / unfillRate - 1)'
-        ifmoveform = 'if isUnfill:\n{moveunfill}\nelse:\n{move}\nfi'
-        gbounds = rglyph.bounds
-        upformtype = ['3', '4', '5', '6']
-        downformtype = ['2', '4', '6']
-        standardpoints = {}
-
-        if firstattr.get_attr('sound') == 'first' and firstattr.get_attr('formType') in upformtype:
-            standardpoints['h'] = [findpoint(rglyph, (None, gbounds[1]))]
-            standardpoints['w'] = []
-        elif firstattr.get_attr('sound') == 'final' and firstattr.get_attr('formType') in downformtype:
-            if firstattr.get_attr('double') is None:
-                standardpoints['h'] = [findpoint(rglyph, (None, gbounds[3]))]
-                standardpoints['w'] = []
-            else:
-                leftcontours = [rcontour for rcontour in rglyph if get_attr(rcontour.points[0], 'double') == 'left']
-                rightcontours = [rcontour for rcontour in rglyph if get_attr(rcontour.points[0], 'double') == 'right']
-
-                lgbounds = getbounds(leftcontours)
-                rgbounds = getbounds(rightcontours)
-
-                standardpoints['h'] = [findpoint(leftcontours, (None, lgbounds[3])), findpoint(rightcontours, (None, rgbounds[3]))]
-                standardpoints['w'] = [findpoint(leftcontours, (lgbounds[2], None)), findpoint(rightcontours, (rgbounds[0], None))]
-        else:
-            standardpoints['h'] = []
-            standardpoints['w'] = []
-
-        moves = ''
-        moveunfills = ''
-
-        for key in standardpoints.keys():
-            hw = 'Height' if key == 'h' else 'Width'
-            hv = 'V' if key == 'h' else 'H'
-            penparts = []
-            for point in standardpoints.get(key):
-                attr = Attribute(point)
-                name = attr.get_attr('penPair')
-
-                if hw == 'Height':
-                    depend = attr.get_attr('dependY')
-                else:
-                    depend = attr.get_attr('dependX')
-
-                if depend is not None:
-                    if depend[-1] == 'l':
-                        pen = 'pen' + hw + '_' + depend[1: -1]
-                    else:
-                        pen = '- pen' + hw + '_' + depend[1: -1]
-                else:
-                    if name[-1] == 'l':
-                        pen = 'pen' + hw + '_' + name[1: -1]
-                    else:
-                        pen = '- pen' + hw + '_' + name[1: -1]
-                if attr.get_attr('stroke') is not None:
-                    pen += ' + pen' + hw + '_' + name[1: -1] + '_e'
-
-                penparts.append(penpartform.format(pen=pen, hw=hw))
-
-            unfill = unfillform.format(hw=hw)
-            if len(penparts) == 0:
-                moves += '\t' + moveform.format(hv=hv, opt='_', penpart='', unfill='')
-                moveunfills += '\t' + moveform.format(hv=hv, opt='_', penpart='', unfill='')
-            elif len(penparts) == 1:
-                moves += '\t' + moveform.format(hv=hv, opt='_', penpart=penparts[0], unfill='')
-                moveunfills += '\t' + moveform.format(hv=hv, opt='_', penpart=penparts[0], unfill=unfill)
-            else:
-                opt = ['_l', '_r']
-                for i in range(2):
-                    moves += '\t' + moveform.format(hv=hv, opt=opt[i], penpart=penparts[i], unfill='')
-                    moveunfills += '\t' + moveform.format(hv=hv, opt=opt[i], penpart=penparts[i], unfill=unfill)
-
-        fp.write(ifmoveform.format(moveunfill=moveunfills, move=moves))
 
         ##############################################################################
         # L, R points
@@ -995,6 +918,108 @@ def glyph2mf(glyphName, dirUFO, dirRadical, dirCombination, fontWidth, rfont):
                                                 coordrate=coordratex[num], pen=penx[num], raidus=raidus[num], op=op))
                         fp.write(bcpform.format(bcpname='y' + bcpname, num=num + 1, anchor='y' + anchor[num],
                                                 coordrate=coordratey[num], pen=peny[num], raidus=raidus[num], op=op))
+
+        ##############################################################################
+        # change moveSize
+
+        moveform = 'moveSizeOf{hv}{opt} := moveSizeOf{hv}{dist};\n'
+        distform = ' + ({end} - {start} {pen}{unfill})'
+        unfillform = ' / (pen{hw}Rate - 1) * (pen{hw}Rate / unfillRate - 1)'
+        ifmoveform = 'if isUnfill:\n{moveunfill}\nelse:\n{move}\nfi'
+        gbounds = rglyph.bounds
+        upformtype = ['3', '4', '5', '6']
+        downformtype = ['2', '4', '6']
+        standardpoints = {}
+
+        if firstattr.get_attr('sound') == 'first' and firstattr.get_attr('formType') in upformtype:
+            standardpoints['h'] = [findpoint(rglyph, (None, gbounds[1]))]
+            standardpoints['w'] = []
+        elif firstattr.get_attr('sound') == 'final' and firstattr.get_attr('formType') in downformtype:
+            if firstattr.get_attr('double') is None:
+                standardpoints['h'] = [findpoint(rglyph, (None, gbounds[3]))]
+                standardpoints['w'] = []
+            else:
+                leftcontours = [rcontour for rcontour in rglyph if get_attr(rcontour.points[0], 'double') == 'left']
+                rightcontours = [rcontour for rcontour in rglyph if
+                                 get_attr(rcontour.points[0], 'double') == 'right']
+
+                lgbounds = getbounds(leftcontours)
+                rgbounds = getbounds(rightcontours)
+
+                standardpoints['h'] = [findpoint(leftcontours, (None, lgbounds[3])),
+                                       findpoint(rightcontours, (None, rgbounds[3]))]
+                standardpoints['w'] = [findpoint(leftcontours, (lgbounds[2], None)),
+                                       findpoint(rightcontours, (rgbounds[0], None))]
+        else:
+            standardpoints['h'] = []
+            standardpoints['w'] = []
+
+        moves = ''
+        moveunfills = ''
+
+        for key in standardpoints.keys():
+            hw = 'Height' if key == 'h' else 'Width'
+            hv = 'V' if key == 'h' else 'H'
+            xy = 'y' if key == 'h' else 'x'
+            dists = []
+            distsunfill = []
+            unfill = unfillform.format(hw=hw)
+
+            for point in standardpoints.get(key):
+                attr = Attribute(point)
+                name = xy + attr.get_attr('penPair')[1:]
+
+                if hw == 'Height':
+                    depend = attr.get_attr('dependY')
+                else:
+                    depend = attr.get_attr('dependX')
+
+                if name[1: -1] in siotorder[1: -1]:
+                    if depend is not None:
+                        if depend[-1] == 'l':
+                            pen = '- pen' + hw + '_' + depend[1: -1]
+                        else:
+                            pen = 'pen' + hw + '_' + depend[1: -1]
+                    else:
+                        if name[-1] == 'l':
+                            pen = '- pen' + hw + '_' + name[1: -1]
+                        else:
+                            pen = 'pen' + hw + '_' + name[1: -1]
+                    pen += '_' + key
+                    if attr.get_attr('stroke') is not None:
+                        pen += ' + pen' + hw + '_' + name[1: -1] + '_e'
+                    dists.append(
+                        distform.format(end=name[: -2] + '_' + key + name[-1], start=name, pen=pen, unfill=''))
+                    distsunfill.append(distform.format(end=name + '_ori', start=name, pen='', unfill=''))
+                else:
+                    if depend is not None:
+                        if depend[-1] == 'l':
+                            pen = '- pen' + hw + '_' + depend[1: -1]
+                        else:
+                            pen = 'pen' + hw + '_' + depend[1: -1]
+                    else:
+                        if name[-1] == 'l':
+                            pen = '- pen' + hw + '_' + name[1: -1]
+                        else:
+                            pen = 'pen' + hw + '_' + name[1: -1]
+                    if attr.get_attr('stroke') is not None:
+                        pen += ' + pen' + hw + '_' + name[1: -1] + '_e'
+                    dists.append(distform.format(end=name, start=name, pen=pen, unfill=''))
+                    distsunfill.append(distform.format(end=name, start=name, pen=pen, unfill=unfill))
+
+            if len(dists) == 0:
+                moves += '\t' + moveform.format(hv=hv, opt='_', dist='')
+                moveunfills += '\t' + moveform.format(hv=hv, opt='_', dist='')
+            elif len(dists) == 1:
+                moves += '\t' + moveform.format(hv=hv, opt='_', dist=dists[0])
+                moveunfills += '\t' + moveform.format(hv=hv, opt='_', dist=distsunfill[0])
+            else:
+                opt = ['_l', '_r']
+                for i in range(2):
+                    moves += '\t' + moveform.format(hv=hv, opt=opt[i], dist=dists[i])
+                    moveunfills += '\t' + moveform.format(hv=hv, opt=opt[i], dist=distsunfill[i])
+
+        fp.write(ifmoveform.format(moveunfill=moveunfills, move=moves))
 
         #####################################################################################
         # round point
