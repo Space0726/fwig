@@ -22,6 +22,12 @@ def _is_overlap_other_contour(contours, target_contour):
     return False
 
 def find_overlap_contour_current_font():
+    """ Finds overlapping contours in the current font.
+
+    Returns:
+        overlap_set:: set
+            A set of overlapping RContour objects in the current font.
+    """
     font = CurrentFont()
     overlap_set = set()
     for o in font.glyphOrder:

@@ -16,7 +16,7 @@ class YullyeoOrdering(od.Ordering):
         if self.glyph.name.endswith('C'):
             return None
         elif self.glyph.name.endswith('V'):
-            padding_glyphs = font.getGlyph(self.glyph.name[:-1] + 'C'),
+            padding_glyphs = font.getGlyph(self.glyph.name[:-1] + 'C')
         elif self.glyph.name.endswith('F'):
             padding_glyphs = font.getGlyph(self.glyph.name[:-1] + 'C'), \
                              font.getGlyph(self.glyph.name[:-1] + 'V')
@@ -30,8 +30,7 @@ class YullyeoOrdering(od.Ordering):
 
 if __name__ == '__main__':
     font = CurrentFont()
-    for o in font.glyphOrder:
-        glyph = font.getGlyph(o)
+    for order in font.glyphOrder:
+        glyph = font.getGlyph(order)
         if glyph.name.find('uni') == -1:
-            print(glyph.name)
             YullyeoOrdering(glyph, 'penPair').attributes_ordering()

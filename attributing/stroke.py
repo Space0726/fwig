@@ -1,3 +1,9 @@
+""" This is for adding stroke attribute at points.
+
+Last modified date: 2019/12/11
+
+Created by Seongju Woo.
+"""
 from stemfont.tools import attributetools as at
 
 class _PairError(Exception):
@@ -63,6 +69,18 @@ def _classify_contours(glyph):
     return tuple(classified_dict.values())
 
 def add_stroke_attr(glyph):
+    """ Adds stroke attribute at first point of the glyph.
+
+    The stroke attribute indicates that the point is the start or end point
+    when drawing the letter. The stroke attribute's key is 'stroke' and the value is
+    'begin' or 'end'. This attribute depends on 'double', 'char' and 'sound'
+    attribute so make sure that these attributes are already inside the glyph
+    before calling this function.
+
+    Args:
+        glyph:: RGlyph
+            The RGlyph object that you want to add stroke attribute.
+    """
     repr_point = at.name2dict(glyph.contours[0].points[0].name)
     if repr_point.get('double') is not None:
         for contour in glyph.contours:

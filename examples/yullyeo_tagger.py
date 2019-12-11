@@ -69,8 +69,7 @@ class YullyeoTagger(Uni2Kor):
             attr.add_attr('char', self.char_tag)
             attr.add_attr('formType', self.form_type)
             if self.is_double and attr.get_attr('double') is None:
-                sound = attr.get_attr('sound')
-                center_x = _calc_center(point)[0]
+                sound = attr.get_attr('sound') center_x = _calc_center(point)[0]
                 if sound == 'final':
                     if center_x < 311:
                         attr.add_attr('double', 'left')
