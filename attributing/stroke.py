@@ -72,10 +72,10 @@ def add_stroke_attr(glyph):
     """ Adds stroke attribute at first point of the glyph.
 
     The stroke attribute indicates that the point is the start or end point
-    when drawing the letter. The stroke attribute's key is 'stroke' and the value is
-    'begin' or 'end'. This attribute depends on 'double', 'char' and 'sound'
-    attribute so make sure that these attributes are already inside the glyph
-    before calling this function.
+    when drawing the letter. The key of stroke attribute is 'stroke' and the
+    value is 'begin' or 'end'. This attribute depends on 'double', 'char' and
+    'sound' attribute so make sure that these attributes are already inside
+    the glyph before calling this function.
 
     Args:
         glyph:: RGlyph
