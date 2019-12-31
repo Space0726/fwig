@@ -1,6 +1,6 @@
 """ This is for adding sound attribute at points.
 
-Last modified data: 2019/09/11
+Last modified date: 2019/09/11
 
 Created by Seongju Woo.
 """
@@ -47,9 +47,15 @@ class Sound:
 
         Args:
             add_sound:: bool
+                If this value is True, set the sound attribute to name area.
+
+        Raises:
+            sound attribute value error:: ValueError
+                Raises exception if sound attribute value is not in [-1, 0, 1, 2].
 
         Returns:
             name_attr:: str
+                The name value of RPoint object that added sound attribute.
         """
         name_attr = "'sound':"
         glyph_sound = self.calculate_sound()

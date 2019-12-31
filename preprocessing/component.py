@@ -1,6 +1,14 @@
+""" Makes component of glyphs.
+
+Last modified date: 2019/12/14
+
+Created by Jeongjae Suk.
+Modified by Seongju Woo.
+"""
 from fontParts.world import CurrentFont
 
 def make_component_current_font():
+    """ Makes component of glyphs in current font. """
     f = CurrentFont()
     keys = f.keys()
 
