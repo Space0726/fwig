@@ -82,6 +82,12 @@ def name2dict(name) -> dict:
     Args:
         name:: str
             A JSON format string. For example, "'penPair':'z1r'".
+
+    Examples:
+        >>> from stemfont.tools import attributetools as at
+        >>> name = "'penPair':'z1r','serif':'1'"
+        >>> at.name2dict(name)
+        {'penPair': 'z1r', 'serif': '1'}
     """
     if name is None:
         return {}
@@ -96,6 +102,12 @@ def dict2name(dict_attributes) -> str:
     Args:
         dict_attributes:: dict
             A dictionary of attributes.
+
+    Examples:
+        >>> from stemfont.tools import attributetools as at
+        >>> dict_ = {'penPair': 'z1r', 'serif': '1'}
+        >>> at.dict2name(dict_)
+        "'penPair':'z1r','serif':'1'"
     """
     return ','.join([f"'{k}':'{v}'" for k, v in dict_attributes.items()])
 
@@ -104,10 +116,13 @@ def get_attr(point, attribute):
 
     Args:
         point:: RPoint
+            The RPoint object that you want to get attribute value.
         attribute:: str
+            The key of attribute that you want to get value.
 
     Returns:
         attribute value:: str
+            The value of attribute.
     """
     attributes = name2dict(point.name)
     return attributes.get(attribute)
@@ -117,8 +132,11 @@ def set_attr(point, attribute, value):
 
     Args:
         point:: RPoint
+            The RPoint object that you want to set attribute.
         attribute:: str
+            The key of attribute that you want to set.
         value:: str
+            The new value of attribute that you want to set.
     """
     attributes = name2dict(point.name)
     if attribute in attributes:
@@ -131,8 +149,11 @@ def add_attr(point, attribute, value):
 
     Args:
         point:: RPoint
+            The RPoint object that you want to add attribute.
         attribute:: str
+            The key of attribute that you want to add.
         value:: str
+            The value of attribute that you want to add.
     """
     attributes = name2dict(point.name)
     if attribute not in attributes:
@@ -145,7 +166,9 @@ def del_attr(point, attribute):
 
     Args:
         point:: RPoint
+            The RPoint object that you want to delete attribute.
         attribute:: str
+            The key of attribute that you want to delete.
     """
     attributes = name2dict(point.name)
     try:
@@ -161,10 +184,13 @@ def get_all_points(glyph, offcurve=False):
 
     Args:
         glyph:: RGlyph
+            The RGlyph object that you want to get all RPoint objects.
         offcurve:: bool (default is False)
+            If this value is False, doesn't get 'offcurve' type RPoint object(bcp).
 
     Returns:
         all RPoint objects:: set
+            Every RPoint objects in the RGlyph object.
     """
     if not offcurve:
         return set([point for contour in glyph.contours \
@@ -179,14 +205,19 @@ def get_penpair_dict(glyph):
 
     Args:
         glyph:: RGlyph
+            The RGlyph object that you want to get penPair attribute dictionary.
 
     Returns:
         penpair_dict:: dict
+            The penPair attribute dictionary of RGlyph object. If there is no
+            penPair attribute in the RGlyph object, returns empty dictionary.
     """
     penpair_dict = {}
     all_points = get_all_points(glyph)
     for point in all_points:
         penpair = get_attr(point, 'penPair')[1:-1]
+        if penpair is None:
+            continue
         if penpair in penpair_dict:
             penpair_dict[penpair].append(point)
         else:
@@ -195,25 +226,38 @@ def get_penpair_dict(glyph):
 
 
 class Attribute:
-    """ A class for keeping RPoint object's attribute.
+    """ A class for keeping RPoint object's attributes.
 
     Args:
         point:: RPoint
+            The RPoint object that you want to keep attributes.
+
+    Examples:
+        >>> from fontParts.world import CurrentGlyph
+        >>> from stemfont.tools import attributetools as at
+        >>> glyph = CurrentGlyph()
+        >>> point = glyph.contours[0].points[0]
+        >>> point.name
+        "'penPair':'z1r'"
+        >>> point_attr = at.Attribute(point)
+        >>> point_attr.get_attr('penPair')
+        'z1r'
+        >>> point_attr.add_attr('dependX', 'z2r')
+        >>> point_attr.point.name
+        "'penPair':'z1r','dependX':'z2r'"
+        >>> point_attr.set_attr('dependX', 'z3l')
+        >>> point_attr.point.name
+        "'penPair':'z1r','dependX':'z3l'"
+        >>> point_attr.del_attr('dependX')
+        >>> point_attr.point.name
+        "'penPair':'z1r'"
     """
     def __init__(self, point):
         self.point = point
         if point.name:
             self.attribute = name2dict(point.name)
         else:
-            contour = point.contour
-            glyph = point.glyph
-            font = point.font
-            path = font.path
-            tree = et.parse(path + '/glyphs' + glyph.name)
-            glif = tree.getroot()
-            outline = glif.find('outline')
-            attribdict = outline[contour.index][point.index].attrib
-            self.attribute = attribdict
+            self.attribute = {}
 
     def _update_attr(self):
         self.point.name = dict2name(self.attribute)
@@ -223,9 +267,11 @@ class Attribute:
 
         Args:
             attribute:: str
+                The key of attribute that you want to get value.
 
         Returns:
             attribute value:: str
+                The value of attribute.
         """
         return self.attribute.get(attribute)
 
@@ -234,7 +280,9 @@ class Attribute:
 
         Args:
             attribute:: str
+                The key of attribute that you want to set.
             value:: str
+                The new value of attribute that you want to set.
         """
         if attribute in self.attribute:
             self.attribute[attribute] = value
@@ -246,7 +294,9 @@ class Attribute:
 
         Args:
             attribute:: str
+                The key of attribute that you want to add.
             value:: str
+                The value of attribute that you want to add.
         """
         if attribute not in self.attribute:
             self.attribute[attribute] = value
@@ -258,6 +308,7 @@ class Attribute:
 
         Args:
             attribute:: str
+                The key of attribute that you want to delete.
         """
         try:
             del(self.attribute[attribute])
