@@ -7,7 +7,8 @@ Created by Seongju Woo.
 import os
 import json
 from xml.etree import ElementTree as et
-from fontParts.fontshell import RGlyph
+from fontParts.fontshell.contour import RContour
+from fontParts.fontshell.glyph import RGlyph
 
 def name2attr(path):
     """ Converts JSON format string to xml attributes.
@@ -202,7 +203,7 @@ def get_all_points(obj, offcurve=False):
         else:
             return set([point for contour in glyph.contours \
                               for point in contour.points])
-    else:
+    elif isinstance(obj, RContour):
         contour = obj
         if not offcurve:
             return set([point for point in contour.points \
