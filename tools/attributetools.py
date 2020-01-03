@@ -8,6 +8,7 @@ import os
 import json
 #from mojo.roboFont import RPoint
 from xml.etree import ElementTree as et
+from mojo.roboFont import *
 
 def name2attr(path):
     path += '/glyphs'
@@ -104,15 +105,24 @@ def del_attr(point, attribute):
     else:
         point.name = dict2name(attributes)
 
-def get_all_points(glyph, offcurve=False):
-    if not offcurve:
-        return set([point for contour in glyph.contours \
-                          for point in contour.points \
-                          if point.type != 'offcurve'])
+def get_all_points(obj, offcurve=False):
+    if isinstance(obj, RGlyph):
+        glyph = obj
+        if not offcurve:
+            return set([point for contour in glyph.contours \
+                              for point in contour.points \
+                              if point.type != 'offcurve'])
+        else:
+            return set([point for contour in glyph.contours \
+                              for point in contour.points])
     else:
-        return set([point for contour in glyph.contours \
-                          for point in contour.points])
-
+        contour = obj
+        if not offcurve:
+            return set([point for point in contour.points \
+                              if point.type != 'offcurve'])
+        else:
+            return set([point for point in contour.points])
+            
 def get_penpair_dict(glyph):
     penpair_dict = {}
     all_points = get_all_points(glyph)
