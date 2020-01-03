@@ -1,5 +1,7 @@
 # Fwig
 ##### (Font + Twig = Fwig)
-### To handle UFO format font data by using [FontParts](https://fontparts.readthedocs.io/en/stable/index.html) library.
+### A high-level interface font tools for people who are not used to handling font data.
 - This is for STEMFONT project.
-- Also for font designers using [FontParts](https://fontparts.readthedocs.io/en/stable/index.html) based programs such as [RoboFont](https://robofont.com/).
+- Also for font designers, especially using [FontParts](https://github.com/robotools/fontParts) based programs such as [RoboFont](https://robofont.com/).
+- Mainly handles [UFO](http://unifiedfontobject.org/) format font data(especially CJK font).
+- Open sources that used: [FontParts](https://github.com/robotools/fontParts), [bezier](https://github.com/dhermes/bezier), [seaborn](https://github.com/mwaskom/seaborn), [Matplotlib](https://github.com/matplotlib/matplotlib), [NumPy](https://github.com/numpy/numpy) and so on.
