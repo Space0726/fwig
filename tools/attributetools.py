@@ -7,7 +7,7 @@ Created by Seongju Woo.
 import os
 import json
 from xml.etree import ElementTree as et
-from mojo.roboFont import *
+from fontParts.fontshell import RGlyph
 
 def name2attr(path):
     """ Converts JSON format string to xml attributes.
@@ -181,6 +181,18 @@ def del_attr(point, attribute):
         point.name = dict2name(attributes)
 
 def get_all_points(obj, offcurve=False):
+    """ Gets all RPoint objects of RGlyph or RContour object.
+
+    Args:
+        obj:: RGlyph or RContour
+            The RGlyph or RContour object that you want to get all RPoint objects.
+        offcurve:: bool (default is False)
+            If this value is False, doesn't get 'offcurve' type RPoint object(bcp).
+
+    Returns:
+        all RPoint objects:: set
+            Every RPoint objects in the RGlyph or RContour object.
+    """
     if isinstance(obj, RGlyph):
         glyph = obj
         if not offcurve:
