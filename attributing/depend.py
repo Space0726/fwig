@@ -1,3 +1,9 @@
+""" This is for adding depend attribute at points.
+
+Last modified date: 2019/12/14
+
+Created by Seongju Woo.
+"""
 from itertools import chain
 from stemfont.tools import attributetools as at
 
@@ -10,19 +16,19 @@ def _find_depend_target(point, penpair_dict, point_list):
             return target_point
     return None
 
-def distance(point_1, point_2):
+def _distance(point_1, point_2):
     return ((point_1.x - point_2.x)**2 + (point_1.y - point_2.y)**2) ** 0.5
 
 def _is_between(pair_points, target_point):
     if _is_linear(pair_points, target_point):
-        return distance(pair_points[0], target_point) + distance(target_point, pair_points[1]) \
-               == distance(*pair_points)
+        return _distance(pair_points[0], target_point) + _distance(target_point, pair_points[1]) \
+               == _distance(*pair_points)
     else:
         return None
 
 def _is_linear(pair_points, target_point):
-    return _calculate_inclination(pair_points[0], target_point) == \
-            _calculate_inclination(target_point, pair_points[1])
+    return _calculate_inclination(pair_points[0], target_point) \
+           == _calculate_inclination(target_point, pair_points[1])
 
 def _is_diff_direction(pair_points_1, pair_points_2):
     inclination_1 = _calculate_inclination(*pair_points_1)
@@ -36,9 +42,22 @@ def _calculate_inclination(point_1, point_2):
     except ZeroDivisionError:
         return float('inf')
 
-def add_depend_attribute(glyph):
-    if glyph.name.find('V') != -1 or not glyph.hasOverlap():
-        return None
+def add_depend_attr(glyph):
+    """ Adds depend attribute at points of the glyph.
+
+    The depend attribute indicates that certain points move in dependence on
+    other points to maintain their shape while the letter is transformed.
+    The key of depend attribute is 'dependX' or 'dependY' and the value is
+    penPair attribute value(ex.'z1r'). The points with the depend attribute
+    move as the dependent values move.
+
+    Args:
+        glyph:: RGlyph
+            The RGlyph object that you want to add depend attribute.
+    Raises:
+        type of variable error:: TypeError
+            If TypeError occurred, passes that case.
+    """
     penpair_dict = at.get_penpair_dict(glyph)
     all_points = chain(*penpair_dict.values())
     for contour in glyph.contours:

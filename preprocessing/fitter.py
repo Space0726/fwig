@@ -1,9 +1,7 @@
 import bezier
 import numpy as np
-from stemfont.tools import attributetools as at
-from stemfont.tools import appendtools as apt
-from stemfont.tools import extendtools as et
-from stemfont.tools import beziertools as bt
+from stemfont.tools import attributetools as at, appendtools as apt, \
+                           extendtools as et, beziertools as bt
 
 def _distance(point_1, point_2):
     return (point_1[0] - point_2[0])**2 + (point_1[1] - point_2[1])**2
@@ -155,13 +153,13 @@ def _fit_bcps(standard, target, fit_target=True):
                         target.points[idx].smooth = False
                     target.points[idx-1].position = standard.points[original_idx-1].position
                     target.points[idx-2].position = standard.points[original_idx-2].position
-                    target.changed()
+                    target.setChanged()
                 else:
                     if standard.points[original_idx].smooth:
                         standard.points[original_idx].smooth = False
                     standard.points[original_idx-1].position = target.points[idx-1].position
                     standard.points[original_idx-2].position = target.points[idx-2].position
-                    standard.changed()
+                    standard.setChanged()
 
 def fit_contour(original, piece, fit_piece=True):
     """ Fit piece to curve.

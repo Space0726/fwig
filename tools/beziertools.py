@@ -25,7 +25,7 @@ class RCurve(bezier.Curve):
         _copy:: bool
 
     Examples:
-        from mojo.world import CurrentGlyph
+        from fontParts.world import CurrentGlyph
 
         glyph = CurrentGlyph()
         contour = glyph.contours[0]
