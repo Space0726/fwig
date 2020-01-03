@@ -7,6 +7,7 @@ Created by Seongju Woo.
 import os
 import json
 from xml.etree import ElementTree as et
+from mojo.roboFont import *
 
 def name2attr(path):
     """ Converts JSON format string to xml attributes.
@@ -84,7 +85,7 @@ def name2dict(name) -> dict:
             A JSON format string. For example, "'penPair':'z1r'".
 
     Examples:
-        >>> from stemfont.tools import attributetools as at
+        >>> from fwig.tools import attributetools as at
         >>> name = "'penPair':'z1r','serif':'1'"
         >>> at.name2dict(name)
         {'penPair': 'z1r', 'serif': '1'}
@@ -104,7 +105,7 @@ def dict2name(dict_attributes) -> str:
             A dictionary of attributes.
 
     Examples:
-        >>> from stemfont.tools import attributetools as at
+        >>> from fwig.tools import attributetools as at
         >>> dict_ = {'penPair': 'z1r', 'serif': '1'}
         >>> at.dict2name(dict_)
         "'penPair':'z1r','serif':'1'"
@@ -179,27 +180,24 @@ def del_attr(point, attribute):
     else:
         point.name = dict2name(attributes)
 
-def get_all_points(glyph, offcurve=False):
-    """ Gets all RPoint objects from RGlyph object. 
-
-    Args:
-        glyph:: RGlyph
-            The RGlyph object that you want to get all RPoint objects.
-        offcurve:: bool (default is False)
-            If this value is False, doesn't get 'offcurve' type RPoint object(bcp).
-
-    Returns:
-        all RPoint objects:: set
-            Every RPoint objects in the RGlyph object.
-    """
-    if not offcurve:
-        return set([point for contour in glyph.contours \
-                          for point in contour.points \
-                          if point.type != 'offcurve'])
+def get_all_points(obj, offcurve=False):
+    if isinstance(obj, RGlyph):
+        glyph = obj
+        if not offcurve:
+            return set([point for contour in glyph.contours \
+                              for point in contour.points \
+                              if point.type != 'offcurve'])
+        else:
+            return set([point for contour in glyph.contours \
+                              for point in contour.points])
     else:
-        return set([point for contour in glyph.contours \
-                          for point in contour.points])
-
+        contour = obj
+        if not offcurve:
+            return set([point for point in contour.points \
+                              if point.type != 'offcurve'])
+        else:
+            return set([point for point in contour.points])
+            
 def get_penpair_dict(glyph):
     """ Gets penPair attribute dictionary of RGlyph object.
 
@@ -234,7 +232,7 @@ class Attribute:
 
     Examples:
         >>> from fontParts.world import CurrentGlyph
-        >>> from stemfont.tools import attributetools as at
+        >>> from fwig.tools import attributetools as at
         >>> glyph = CurrentGlyph()
         >>> point = glyph.contours[0].points[0]
         >>> point.name

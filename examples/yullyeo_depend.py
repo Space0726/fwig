@@ -4,8 +4,8 @@ Last modified date: 2019/12/14
 
 Created by Seongju Woo.
 """
-from stemfont.tools import iterfont
-from stemfont.attributing.depend import add_depend_attr
+from fwig.tools import iterfont
+from fwig.attributing.depend import add_depend_attr
 
 def need_depend(glyph):
     """ Finds RGlyph object that needs depend attribute. """

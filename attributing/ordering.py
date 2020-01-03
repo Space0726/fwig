@@ -6,7 +6,7 @@ Created by Seongju Woo.
 """
 import abc
 import itertools as it
-from stemfont.tools import attributetools as at
+from fwig.tools import attributetools as at
 
 def _get_penpair_values(contour):
     return [int(at.get_attr(point, 'penPair')[1:-1]) for point in contour.points \

@@ -4,7 +4,7 @@ Last modified date: 2019/09/11
 
 Created by Seongju Woo.
 """
-from stemfont.attributing import sound
+from fwig.attributing import sound
 from fontParts.world import CurrentFont
 
 class YullyeoSound(sound.Sound):

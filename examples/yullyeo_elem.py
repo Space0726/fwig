@@ -4,7 +4,7 @@ Last modified date: 2019/12/11
 
 Created by Seongju Woo.
 """
-from stemfont.tools import attributetools as at, iterfont
+from fwig.tools import attributetools as at, iterfont
 from fontParts.world import CurrentFont
 
 def _is_inside_point(glyph, point):

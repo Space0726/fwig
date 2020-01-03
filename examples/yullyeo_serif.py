@@ -1,4 +1,4 @@
-from stemfont.tools import attributetools as at, iterfont
+from fwig.tools import attributetools as at, iterfont
 from fontParts.world import CurrentFont
 
 def is_serif_contour(glyph):

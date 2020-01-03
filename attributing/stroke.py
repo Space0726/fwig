@@ -4,7 +4,7 @@ Last modified date: 2019/12/11
 
 Created by Seongju Woo.
 """
-from stemfont.tools import attributetools as at
+from fwig.tools import attributetools as at
 
 class _PairError(Exception):
     def __init__(self, e):

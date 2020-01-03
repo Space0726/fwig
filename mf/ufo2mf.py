@@ -1,8 +1,9 @@
 import os
 from fontParts.world import OpenFont, CurrentFont
-from stemfont.tools import attributetools as at
-from stemfont.mf import constants as mfc
+from fwig.tools import attributetools as at
+from fwig.mf import constants as mfc
 
+# convert number of unicode to alphabet
 class Num2Char:
     n2c = {
         '1':'o',

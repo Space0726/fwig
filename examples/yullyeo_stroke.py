@@ -1,5 +1,5 @@
-from stemfont.attributing.stroke import add_stroke_attr
-from stemfont.tools import iterfont
+from fwig.attributing.stroke import add_stroke_attr
+from fwig.tools import iterfont
 from fontParts.world import CurrentFont
 
 def need_stroke(glyph):

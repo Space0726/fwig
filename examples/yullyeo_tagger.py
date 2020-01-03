@@ -1,5 +1,5 @@
-from stemfont.unicode import Uni2Kor
-from stemfont.tools import attributetools as at, iterfont
+from fwig.unicode import Uni2Kor
+from fwig.tools import attributetools as at, iterfont
 from fontParts.world import CurrentFont
 
 class YullyeoTagger(Uni2Kor):

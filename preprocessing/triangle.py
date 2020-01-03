@@ -4,7 +4,7 @@ Last modified date: 2019/08/28
 
 Created by Seongju Woo.
 """
-from stemfont.tools import extendtools as et
+from fwig.tools import extendtools as et
 
 class Triangle:
     """ Makes an isolated point into a triangle shape of two points.

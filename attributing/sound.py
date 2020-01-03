@@ -5,7 +5,7 @@ Last modified date: 2019/09/11
 Created by Seongju Woo.
 """
 import abc
-from stemfont.tools import attributetools as at
+from fwig.tools import attributetools as at
 
 class Sound:
     """ This class is for adding sound attribute at points.
