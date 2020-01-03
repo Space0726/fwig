@@ -85,7 +85,7 @@ def name2dict(name) -> dict:
             A JSON format string. For example, "'penPair':'z1r'".
 
     Examples:
-        >>> from stemfont.tools import attributetools as at
+        >>> from fwig.tools import attributetools as at
         >>> name = "'penPair':'z1r','serif':'1'"
         >>> at.name2dict(name)
         {'penPair': 'z1r', 'serif': '1'}
@@ -105,7 +105,7 @@ def dict2name(dict_attributes) -> str:
             A dictionary of attributes.
 
     Examples:
-        >>> from stemfont.tools import attributetools as at
+        >>> from fwig.tools import attributetools as at
         >>> dict_ = {'penPair': 'z1r', 'serif': '1'}
         >>> at.dict2name(dict_)
         "'penPair':'z1r','serif':'1'"
@@ -232,7 +232,7 @@ class Attribute:
 
     Examples:
         >>> from fontParts.world import CurrentGlyph
-        >>> from stemfont.tools import attributetools as at
+        >>> from fwig.tools import attributetools as at
         >>> glyph = CurrentGlyph()
         >>> point = glyph.contours[0].points[0]
         >>> point.name

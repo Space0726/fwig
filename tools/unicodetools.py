@@ -15,12 +15,13 @@ class Uni2Kor:
             A unicode value in Korean range. (0xAC00 ~ 0xD7A3)
 
     Examples:
-        >>> uc = Uni2Char(0xAC00)
+        >>> from fwig.tools import unicodetools as ut
+        >>> uc = ut.Uni2Char(0xAC00)
         >>> uc    # Print letter components
         'AC00: ㄱ + ㅏ'
-        >>> Uni2Char.get_chars(0xAC00)    # Use class method.
+        >>> ut.Uni2Char.get_chars(0xAC00)    # Use class method.
         ['ㄱ', 'ㅏ', None]
-        >>> Uni2Char(0xAC00).get_chars()    # Save characters information to object.
+        >>> ut.Uni2Char(0xAC00).get_chars()    # Save characters information to object.
         ['ㄱ', 'ㅏ', None]
     """
     # 588 each

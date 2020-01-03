@@ -5,7 +5,7 @@ Last modified date: 2019/12/14
 Created by Seongju Woo.
 """
 from itertools import chain
-from stemfont.tools import attributetools as at
+from fwig.tools import attributetools as at
 
 def _find_depend_target(point, penpair_dict, point_list):
     pair_points = penpair_dict[at.get_attr(point, 'penPair')[1:-1]]

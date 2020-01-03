@@ -4,7 +4,7 @@ import sys
 import math
 from fontParts.world import *
 from fontParts.base import BaseGlyph
-from stemfont.tools.attributetools import *
+from fwig.tools.attributetools import *
 
 # confirm file is gilf
 def _is_glif(file_name):

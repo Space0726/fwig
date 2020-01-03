@@ -1,6 +1,6 @@
 import bezier
 import numpy as np
-from stemfont.tools import attributetools as at, appendtools as apt, \
+from fwig.tools import attributetools as at, appendtools as apt, \
                            extendtools as et, beziertools as bt
 
 def _distance(point_1, point_2):
