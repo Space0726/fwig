@@ -1,4 +1,4 @@
-from fwig.unicode import Uni2Kor
+from fwig.tools.unicodetools import Uni2Kor
 from fwig.tools import attributetools as at, iterfont
 from fontParts.world import CurrentFont
 
