@@ -77,7 +77,7 @@ def plot_glif(glyph_path, show_points=True):
     xml_glyph = et.parse(glyph_path).getroot()
     contours = xml_glyph.find('outline').getchildren()
     curve_points = [_Point(p.attrib['x'], p.attrib['y'], p.attrib.get('type')) \
-               for p in contours[0].getchildren()[:4]]
+                    for p in contours[0].getchildren()[:4]]
     nodes = np.asfortranarray([
         [float(p.x) for p in curve_points],
         [float(p.y) for p in curve_points]])
