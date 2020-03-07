@@ -61,11 +61,11 @@ def plot_rglyph(rglyph, show_points=True):
                 continue
     plt.show()
 
-def plot_glif(xml_glyph, show_points=True):
+def plot_glif(glyph_path, show_points=True):
     """ Plotting .glif XML format file in UFO font data.
 
     Args:
-        xml_glyph:: xml.etree.ElementTree.Element
+        glyph_path:: str
     """
     class _Point:
         def __init__(self, x, y, type_):
@@ -74,6 +74,7 @@ def plot_glif(xml_glyph, show_points=True):
             self.type = type_
     # subplot = plt.subplot(xlim=(0, xml_glyph.find('advance').attrib['width']), 
                           # ylim=(0, 1000)) # TODO: Needs modify
+    xml_glyph = et.parse(glyph_path).getroot()
     contours = xml_glyph.find('outline').getchildren()
     curve_points = [_Point(p.attrib['x'], p.attrib['y'], p.attrib.get('type')) \
                for p in contours[0].getchildren()[:4]]
@@ -93,5 +94,3 @@ def plot_glif(xml_glyph, show_points=True):
                 continue
     plt.show()
 
-if __name__ == '__main__':
-    plot_glif(et.parse('./test.xml').getroot(), False)
