@@ -1,6 +1,5 @@
 # Fwig
-##### (Font + Twig = Fwig)
-### A high-level interface font tools for people who are not used to handling font data.
+### UFO font tools for numerical analysis.
 - This is for STEMFONT project.
 - Also for font designers, especially using [FontParts](https://github.com/robotools/fontParts) based programs such as [RoboFont](https://robofont.com/).
 - Mainly handles [UFO](http://unifiedfontobject.org/) format font data(especially CJK font) and METAFONT.
